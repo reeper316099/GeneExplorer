@@ -342,6 +342,248 @@
       "recordedAt": "2026-11-19T04:08:10.810Z",
       "note": "E. coli K-12 substr. MG1655 taxonomy node",
       "label": "REAL recorded response"
+    },
+    {
+      "name": "ncbi-orthologs-tp53-all",
+      "method": "GET",
+      "url": "https://api.ncbi.nlm.nih.gov/datasets/v2/gene/id/7157/orthologs",
+      "status": 200,
+      "file": "ncbi-orthologs-tp53-all.json",
+      "bytes": 1332251,
+      "recordedAt": "2026-11-19T04:55:33.203Z",
+      "note": "All NCBI orthologs of human TP53",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "ncbi-taxa-tp53-batch0",
+      "method": "GET",
+      "url": "https://api.ncbi.nlm.nih.gov/datasets/v2/taxonomy/taxon/7917,7918,7936,7938,7955,7957,7959,7962,7994,7998,8005,8010,8014,8017,8018,8019,8022,8023,8030,8032,8036,8038,8040,8049,8078,8081,8083,8084,8090,8103,8128,8153,8167,8168,8173,8175,8177,8187,8218,8236,8237,8240,8245,8255,8260,8262,8267,8284,8296,8319,8323,8345,8364,8400,8407,8439,8467,8469,8472,8478,8519,8520,8524,8554,8663,8673,8790,8801,8839,8845,8853,8957,8969,9031,9054,9117,9209,9258,9261,9301,9305,9315,9337,9361,9365,9371,9375,9402,9407,9417,9423,9433,9447,9470,9483,9515,9531,9541,9544,9545",
+      "status": 200,
+      "file": "ncbi-taxa-tp53-batch0.json",
+      "bytes": 84604,
+      "recordedAt": "2026-11-19T04:55:33.931Z",
+      "note": "Lineages of TP53 ortholog species",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "ncbi-taxa-tp53-batch1",
+      "method": "GET",
+      "url": "https://api.ncbi.nlm.nih.gov/datasets/v2/taxonomy/taxon/9555,9565,9568,9590,9595,9597,9598,9600,9601,9615,9627,9643,9644,9646,9657,9662,9666,9669,9678,9685,9689,9690,9691,9694,9696,9704,9708,9711,9713,9715,9716,9720,9728,9731,9733,9737,9739,9742,9755,9764,9767,9768,9770,9771,9785,9793,9796,9798,9823,9837,9838,9860,9874,9886,9906,9913,9915,9925,9940,9974,9978,9983,9986,9994,9995,9997,9999,10020,10029,10036,10041,10047,10058,10089,10090,10093,10116,10117,10129,10141,10160,10181,13013,13085,13146,13151,13397,13489,13616,13676,13677,13735,27606,27610,27615,27622,27675,27679,27687,27697",
+      "status": 200,
+      "file": "ncbi-taxa-tp53-batch1.json",
+      "bytes": 84891,
+      "recordedAt": "2026-11-19T04:55:34.702Z",
+      "note": "Lineages of TP53 ortholog species",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "ncbi-taxa-tp53-batch2",
+      "method": "GET",
+      "url": "https://api.ncbi.nlm.nih.gov/datasets/v2/taxonomy/taxon/27704,27706,27720,27771,27788,27790,27794,28377,28680,28737,28743,28829,29064,29065,29073,29078,29088,29139,29144,29151,30331,30387,30397,30423,30427,30521,30522,30532,30538,30608,30611,30640,30732,32473,32507,32509,32536,33528,33562,33595,34773,34774,34816,34839,34865,34880,34884,34886,35575,35658,36176,36239,36300,36723,37003,37029,37032,37174,37181,37293,37598,38527,38626,38654,38674,38775,38937,39042,39082,39617,39638,40151,40157,40690,40816,41426,41447,42100,42254,42410,42514,42526,42636,43179,43346,43581,43689,43700,44489,45623,46844,47969,48139,48427,48668,48698,48699,48701,48708,48744",
+      "status": 200,
+      "file": "ncbi-taxa-tp53-batch2.json",
+      "bytes": 83015,
+      "recordedAt": "2026-11-19T04:55:35.445Z",
+      "note": "Lineages of TP53 ortholog species",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "ncbi-taxa-tp53-batch3",
+      "method": "GET",
+      "url": "https://api.ncbi.nlm.nih.gov/datasets/v2/taxonomy/taxon/48745,48850,48891,50954,51298,51337,51338,51549,51853,52113,52239,52644,52670,52775,52904,54180,54343,55149,55291,55661,56716,56720,56723,56733,57060,57412,58319,58324,58325,59291,59463,59472,59479,59482,59534,59729,59861,60711,60746,61156,61221,61383,61384,61388,61452,61621,61622,61643,61853,61862,62283,63155,64108,64144,64176,65481,65482,65483,65485,66913,68408,68455,68724,69293,71010,72004,72105,73337,74359,74926,74940,75038,75329,75352,76717,76772,77115,77151,77218,77932,79684,79690,80720,80966,80972,81572,81636,82174,82655,83528,83653,83875,84645,84833,85417,87175,88082,88708,89248,89399",
+      "status": 200,
+      "file": "ncbi-taxa-tp53-batch3.json",
+      "bytes": 81390,
+      "recordedAt": "2026-11-19T04:55:36.641Z",
+      "note": "Lineages of TP53 ortholog species",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "ncbi-taxa-tp53-batch4",
+      "method": "GET",
+      "url": "https://api.ncbi.nlm.nih.gov/datasets/v2/taxonomy/taxon/89462,89673,90069,90074,90313,90520,90521,90735,90988,91951,92651,92724,93162,94247,94439,94852,94885,94984,95912,98922,99487,100188,100190,100859,100897,101364,101497,103695,103942,105023,105255,106582,106734,109282,109475,109478,109481,109678,109905,110926,110931,111125,111132,111838,113540,118141,118797,119488,125878,127582,128390,129043,129916,130825,132585,132908,134920,135647,137080,137520,140042,140051,143281,143291,143292,143302,143350,143630,144197,146911,147232,147949,148082,150288,150448,154954,156563,158779,159077,159337,159646,160734,161448,161450,161453,161455,161469,161584,161587,163618,163623,166261,166262,166745,171736,173247,175792,175797,176946,180520",
+      "status": 200,
+      "file": "ncbi-taxa-tp53-batch4.json",
+      "bytes": 81599,
+      "recordedAt": "2026-11-19T04:55:37.421Z",
+      "note": "Lineages of TP53 ortholog species",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "ncbi-taxa-tp53-batch5",
+      "method": "GET",
+      "url": "https://api.ncbi.nlm.nih.gov/datasets/v2/taxonomy/taxon/181472,182223,184440,184585,185453,185739,186990,188132,189534,191813,191870,192404,195075,195615,197941,205130,208333,210632,211835,214514,215343,215358,215367,215402,217509,219593,219752,223781,225400,229290,230844,232653,233779,240838,241271,241820,244447,246437,249018,257770,257877,260615,260995,261503,269649,271503,278164,283035,283036,286002,286419,286572,291302,293821,299321,300413,300417,303726,304217,304258,310571,310915,336983,337641,355514,369639,372321,375764,379532,390379,391180,394691,409849,412090,412623,417921,419612,420107,433684,439328,441366,443677,443705,443729,446415,446457,447135,452646,454631,460621,473354,478635,481883,482537,490064,490388,491861,494514,499056,508554",
+      "status": 200,
+      "file": "ncbi-taxa-tp53-batch5.json",
+      "bytes": 82265,
+      "recordedAt": "2026-11-19T04:55:38.220Z",
+      "note": "Lineages of TP53 ortholog species",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "ncbi-taxa-tp53-batch6",
+      "method": "GET",
+      "url": "https://api.ncbi.nlm.nih.gov/datasets/v2/taxonomy/taxon/546530,564181,572540,575201,586833,591936,642989,642998,662736,670488,693459,698409,752182,859984,885580,930266,933932,933992,941984,948063,992332,1026970,1042646,1047088,1091424,1095086,1129001,1142201,1203425,1230840,1234273,1250792,1330250,1343680,1415580,1497555,1574408,1582913,1606681,1608482,1676925,1706337,1825980,1841481,1868482,1884717,1914718,2059687,2290929,2489341,2546036,2587831,2691554,2715852,2746895,2857398,2871759,2972642,2991368,3034132,3040969,3119969,3127111,3371016,3371109,3371155,3705843,3774380",
+      "status": 200,
+      "file": "ncbi-taxa-tp53-batch6.json",
+      "bytes": 55281,
+      "recordedAt": "2026-11-19T04:55:38.979Z",
+      "note": "Lineages of TP53 ortholog species",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "orthodb-search-p04637",
+      "method": "GET",
+      "url": "https://data.orthodb.org/v12/search?query=P04637&limit=30",
+      "status": 200,
+      "file": "orthodb-search-p04637.json",
+      "bytes": 2133,
+      "recordedAt": "2026-11-19T04:55:39.609Z",
+      "note": "OrthoDB groups containing human TP53",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "orthodb-group-tp53",
+      "method": "GET",
+      "url": "https://data.orthodb.org/v12/group?id=4289813at2759",
+      "status": 200,
+      "file": "orthodb-group-tp53.json",
+      "bytes": 2942,
+      "recordedAt": "2026-11-19T04:55:39.771Z",
+      "note": "OrthoDB group details",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "orthodb-orthologs-tp53-all",
+      "method": "GET",
+      "url": "https://data.orthodb.org/v12/orthologs?id=4289813at2759",
+      "status": 200,
+      "file": "orthodb-orthologs-tp53-all.json",
+      "bytes": 668140,
+      "recordedAt": "2026-11-19T04:55:41.317Z",
+      "note": "All members of the Eukaryota TP53 group",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "ncbi-gene-mouse-trp53",
+      "method": "GET",
+      "url": "https://api.ncbi.nlm.nih.gov/datasets/v2/gene/id/22059",
+      "status": 200,
+      "file": "ncbi-gene-mouse-trp53.json",
+      "bytes": 59234,
+      "recordedAt": "2026-11-19T04:55:41.522Z",
+      "note": "Mouse Trp53 gene report",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "ncbi-product-mouse-trp53",
+      "method": "GET",
+      "url": "https://api.ncbi.nlm.nih.gov/datasets/v2/gene/id/22059/product_report",
+      "status": 200,
+      "file": "ncbi-product-mouse-trp53.json",
+      "bytes": 5862,
+      "recordedAt": "2026-11-19T04:55:41.861Z",
+      "note": "Mouse Trp53 transcripts",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "ncbi-seqreport-mouse-chr11",
+      "method": "GET",
+      "url": "https://api.ncbi.nlm.nih.gov/datasets/v2/genome/accession/GCF_000001635.27/sequence_reports?chromosomes=11",
+      "status": 200,
+      "file": "ncbi-seqreport-mouse-chr11.json",
+      "bytes": 389,
+      "recordedAt": "2026-11-19T04:55:42.036Z",
+      "note": "Mouse chromosome 11 length",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "uniprot-entry-mouse-p53",
+      "method": "GET",
+      "url": "https://rest.uniprot.org/uniprotkb/P02340.json?fields=accession,id,gene_names,gene_primary,protein_name,organism_name,organism_id,reviewed,annotation_score,length,sequence,cc_function,ft_domain,ft_region,go,xref_geneid,xref_refseq,xref_ensembl,xref_orthodb,xref_pdb,xref_alphafolddb,cc_subcellular_location,protein_existence,ft_repeat,ft_transmem,ft_signal,ft_zn_fing,ft_motif,ft_coiled,ft_topo_dom,ft_propep,ft_transit,ft_dna_bind,cc_alternative_products,lineage,sequence_version,version,date_modified",
+      "status": 200,
+      "file": "uniprot-entry-mouse-p53.json",
+      "bytes": 53954,
+      "recordedAt": "2026-11-19T04:55:42.731Z",
+      "note": "Mouse p53 UniProt entry",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "alphafold-mouse-p53",
+      "method": "GET",
+      "url": "https://alphafold.ebi.ac.uk/api/prediction/P02340",
+      "status": 200,
+      "file": "alphafold-mouse-p53.json",
+      "bytes": 2239,
+      "recordedAt": "2026-11-19T04:55:42.953Z",
+      "note": "AlphaFold prediction list, mouse p53",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "alphafold-mouse-p53-model",
+      "method": "GET",
+      "url": "https://alphafold.ebi.ac.uk/files/AF-P02340-F1-model_v6.pdb",
+      "status": 200,
+      "file": "alphafold-mouse-p53-model.pdb",
+      "bytes": 253124,
+      "recordedAt": "2026-11-19T04:55:43.261Z",
+      "note": "AlphaFold model, mouse p53",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "ncbi-orthologs-tp53-mouse",
+      "method": "GET",
+      "url": "https://api.ncbi.nlm.nih.gov/datasets/v2/gene/id/7157/orthologs?taxon_filter=10090",
+      "status": 200,
+      "file": "ncbi-orthologs-tp53-mouse.json",
+      "bytes": 59233,
+      "recordedAt": "2026-11-19T04:55:43.613Z",
+      "note": "NCBI orthologs of TP53 filtered to mouse",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "ncbi-taxon-suggest-mouse",
+      "method": "GET",
+      "url": "https://api.ncbi.nlm.nih.gov/datasets/v2/taxonomy/taxon_suggest/mouse",
+      "status": 200,
+      "file": "ncbi-taxon-suggest-mouse.json",
+      "bytes": 1981,
+      "recordedAt": "2026-11-19T04:55:43.811Z",
+      "note": "Species autocomplete for \"mouse\"",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "ncbi-gene-id-lacz",
+      "method": "GET",
+      "url": "https://api.ncbi.nlm.nih.gov/datasets/v2/gene/id/945006",
+      "status": 200,
+      "file": "ncbi-gene-id-lacz.json",
+      "bytes": 3294,
+      "recordedAt": "2026-11-19T04:55:44.031Z",
+      "note": "E. coli lacZ gene report by ID",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "ncbi-orthologs-lacz",
+      "method": "GET",
+      "url": "https://api.ncbi.nlm.nih.gov/datasets/v2/gene/id/945006/orthologs",
+      "status": 200,
+      "file": "ncbi-orthologs-lacz.json",
+      "bytes": 3294,
+      "recordedAt": "2026-11-19T04:55:44.655Z",
+      "note": "NCBI orthologs of E. coli lacZ",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "orthodb-search-p00722",
+      "method": "GET",
+      "url": "https://data.orthodb.org/v12/search?query=P00722&limit=30",
+      "status": 200,
+      "file": "orthodb-search-p00722.json",
+      "bytes": 1268,
+      "recordedAt": "2026-11-19T04:55:45.606Z",
+      "note": "OrthoDB groups containing lacZ",
+      "label": "REAL recorded response"
     }
   ]
 }

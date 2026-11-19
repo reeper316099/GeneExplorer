@@ -53,10 +53,12 @@ export const endpoints = {
   ncbiOrthologs: (id: NcbiGeneId, taxa: readonly TaxonId[]): string =>
     `${NCBI}/gene/id/${id}/orthologs${taxa.length ? `?${taxa.map((t) => `taxon_filter=${t}`).join('&')}` : ''}`,
   ncbiTaxon: (id: TaxonId): string => `${NCBI}/taxonomy/taxon/${id}`,
+  /** Several taxonomy nodes in one request (comma-separated IDs), so a 700-species list costs ~7 calls, not 700. */
+  ncbiTaxa: (ids: readonly TaxonId[]): string => `${NCBI}/taxonomy/taxon/${ids.join(',')}`,
   ncbiTaxonSuggest: (text: string): string => `${NCBI}/taxonomy/taxon_suggest/${encodeURIComponent(text)}`,
   alphafoldPrediction: (acc: UniProtAccession): string => `${ALPHAFOLD}/api/prediction/${acc}`,
   orthodbSearch: (acc: UniProtAccession, species?: TaxonId): string =>
-    `${ORTHODB}/search?query=${acc}&limit=10${species ? `&species=${species}` : ''}`,
+    `${ORTHODB}/search?query=${acc}&limit=30${species ? `&species=${species}` : ''}`,
   orthodbGroup: (group: OrthoDbGroupId): string => `${ORTHODB}/group?id=${group}`,
   orthodbOrthologs: (group: OrthoDbGroupId, species: readonly TaxonId[]): string =>
     `${ORTHODB}/orthologs?id=${group}${species.length ? `&species=${species.join(',')}` : ''}`,

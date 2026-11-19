@@ -17,6 +17,7 @@ import { observeNet, Session } from './services';
 import { createStatusBar } from './status-bar';
 import { aboutPage, sourcesDrawer } from './views/about';
 import { genePage } from './views/gene-page';
+import { friendlyError } from './views/panel';
 import type { GenePage } from './views/gene-page';
 import {
   candidatePanel,
@@ -143,6 +144,25 @@ export async function startApp(root: HTMLElement): Promise<void> {
 
   const ctx = new AppCtxImpl({
     appVersion: info.version,
+    newApi: () => {
+      const s = new Session();
+      return { api: s.api, cancel: () => s.cancel() };
+    },
+    loadGeneView: async (target) => {
+      const s = new Session();
+      const res = await resolveQuery(s.api, target.id);
+      if (!res.ok) return { ok: false, message: friendlyError(res.error) };
+      const v = res.value;
+      if (v.kind !== 'resolved')
+        return { ok: false, message: 'message' in v ? v.message : 'That gene could not be resolved.' };
+      const view = new GeneView(v.gene, v.protein, v.identity, v.notes, {
+        api: s.api,
+        fromCache: (url) => (url ? metaByUrl.get(url)?.fromCache === true : false),
+        isCancelled: () => s.isCancelled,
+      });
+      view.start();
+      return { ok: true, view, cancel: () => s.cancel() };
+    },
     openGene: (target) => go({ kind: 'gene', target, tab: 0 }),
     search: (query, taxon) => go({ kind: 'search', query, taxon }),
     prefs: () => prefs,
@@ -409,7 +429,9 @@ export async function startApp(root: HTMLElement): Promise<void> {
     } else if (c === 'nav-back') step(-1);
     else if (c === 'nav-forward') step(1);
     else if (c === 'toggle-dark') toggleTheme();
-    else if (c === 'tab-1' || c === 'tab-2' || c === 'tab-3') page?.selectTab(Number(c.slice(4)) - 1);
+    else if (c === 'export-report') void page?.exportReport();
+    else if (c === 'tab-1' || c === 'tab-2' || c === 'tab-3' || c === 'tab-4' || c === 'tab-5')
+      page?.selectTab(Number(c.slice(4)) - 1);
     else toast('That command is not available in this milestone yet.');
   });
   window.addEventListener('keydown', (e) => {

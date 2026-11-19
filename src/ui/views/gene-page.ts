@@ -9,14 +9,20 @@ import type { PrefEntry, Target } from '../prefs';
 import { locationTab } from './location';
 import { overviewTab } from './overview';
 import { proteinTab } from './protein';
+import { CompareHub, compareTab } from './compare';
+import { speciesTab } from './species';
+import { OrthologState } from '../../core/ortholog-state';
+import { buildReport } from './report';
 
-export const TABS = ['Overview', 'Location', 'Protein & Structure'] as const;
+export const TABS = ['Overview', 'Location', 'Protein & Structure', 'Species', 'Compare'] as const;
 
 export interface GenePage {
   el: HTMLElement;
   /** Switches to tab index 0-2. */
   selectTab(i: number): void;
   dispose(): void;
+  /** Builds the printable report and saves it as a PDF through the native dialog. */
+  exportReport(): Promise<void>;
   /** The entry that identifies this gene in recents/favorites. */
   entry: PrefEntry;
 }
@@ -44,6 +50,35 @@ export function genePage(ctx: AppCtx, view: GeneView, initialTab = 0): GenePage 
   };
   const root = h('div');
   const scope = new Scope();
+  const hub = new CompareHub();
+  scope.add(() => hub.dispose());
+  const orthoApi = ctx.newApi();
+  let gone = false;
+  const ortho = new OrthologState(view, orthoApi.api, () => gone);
+  scope.add(() => {
+    gone = true;
+    orthoApi.cancel();
+  });
+  /** Renders the report off-screen content, prints it to PDF, and restores the normal page. */
+  const exportReport = async (): Promise<void> => {
+    ctx.toast('Preparing the report…');
+    const sheet = await buildReport({ view, ortho, hub, appVersion: ctx.appVersion });
+    document.body.append(sheet);
+    document.body.classList.add('printing');
+    try {
+      const r = await window.geneExplorer.printPdf(`${symbol}-report.pdf`);
+      ctx.toast(
+        r.ok
+          ? r.value.saved
+            ? `Report saved to ${r.value.path}`
+            : 'Report cancelled.'
+          : `Could not save the report: ${r.error.message}`,
+      );
+    } finally {
+      document.body.classList.remove('printing');
+      sheet.remove();
+    }
+  };
 
   const star = h(
     'button',
@@ -102,6 +137,17 @@ export function genePage(ctx: AppCtx, view: GeneView, initialTab = 0): GenePage 
             }),
         },
         'Export JSON',
+      ),
+      ' ',
+      h(
+        'button',
+        {
+          class: 'btn',
+          type: 'button',
+          title: 'Save a printable PDF report of this gene (and the open comparison, if any)',
+          onclick: () => void exportReport(),
+        },
+        'Export report',
       ),
       ' ',
       h('button', { class: 'btn', type: 'button', onclick: () => ctx.showSources(view) }, 'Sources'),
@@ -188,20 +234,35 @@ export function genePage(ctx: AppCtx, view: GeneView, initialTab = 0): GenePage 
       b.tabIndex = i === j ? 0 : -1;
     });
     panel.setAttribute('aria-labelledby', `tab-${i}`);
-    setChildren(
-      panel,
+    const content =
       i === 0
         ? overviewTab(ctx, view)
         : i === 1
           ? locationTab(ctx, view, tabScope)
-          : proteinTab(ctx, view, tabScope),
-    );
+          : i === 2
+            ? proteinTab(ctx, view, tabScope)
+            : i === 3
+              ? speciesTab(
+                  ctx,
+                  view,
+                  tabScope,
+                  {
+                    request: (t, label) => {
+                      selectTab(4);
+                      hub.request(t, label);
+                    },
+                  },
+                  ortho,
+                )
+              : compareTab(ctx, view, tabScope, hub);
+    setChildren(panel, content);
     if (focus) buttons[i]?.focus();
   }
   selectTab(index);
   return {
     el: root,
     selectTab: (i) => selectTab(i),
+    exportReport,
     dispose: () => {
       tabScope.dispose();
       scope.dispose();

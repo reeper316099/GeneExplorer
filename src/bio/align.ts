@@ -9,6 +9,8 @@ export interface AlignOptions {
   gapExtend: number;
   /** Refuse inputs whose DP table would exceed this many cells (memory guard). Default 4,000,000. */
   maxCells: number;
+  /** Called about every 32 rows with the fraction done (0-1); lets a worker report progress. */
+  onProgress?: (fraction: number) => void;
 }
 
 export const DEFAULT_ALIGN_OPTIONS: AlignOptions = { gapOpen: -11, gapExtend: -1, maxCells: 4_000_000 };
@@ -174,6 +176,7 @@ export function alignGlobal(seqA: string, seqB: string, options: Partial<AlignOp
   for (let i = 1; i <= m; i++) X[i * w] = go + (i - 1) * ge;
 
   for (let i = 1; i <= m; i++) {
+    if (opts.onProgress && i % 32 === 0) opts.onProgress(i / m);
     const row = BLOSUM62[ai[i - 1] ?? 0];
     if (!row) throw new Error('BLOSUM62 row missing');
     for (let j = 1; j <= n; j++) {

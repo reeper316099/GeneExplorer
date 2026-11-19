@@ -140,13 +140,10 @@ function registerIpc(): void {
     if (!fromOurPage(event) || !parsed.success || !mainWindow) return invalid('Malformed save request.');
     const s = parsed.data;
     return guard(async () => {
-      const pick = await dialog.showSaveDialog(mainWindow as BrowserWindow, {
-        defaultPath: path.basename(s.suggestedName), // basename: the renderer cannot pick a directory
-        filters: s.filters,
-      });
-      if (pick.canceled || !pick.filePath) return { saved: false as const };
-      await fs.writeFile(pick.filePath, s.encoding === 'base64' ? Buffer.from(s.data, 'base64') : s.data);
-      return { saved: true as const, path: pick.filePath };
+      const target = await chooseSavePath(mainWindow as BrowserWindow, s.suggestedName, s.filters);
+      if (!target) return { saved: false as const };
+      await fs.writeFile(target, s.encoding === 'base64' ? Buffer.from(s.data, 'base64') : s.data);
+      return { saved: true as const, path: target };
     });
   });
   ipcMain.handle(IPC.printPdf, async (event, name: unknown) => {
@@ -154,15 +151,27 @@ function registerIpc(): void {
     return guard(async () => {
       const win = mainWindow as BrowserWindow;
       const pdf = await win.webContents.printToPDF({ printBackground: true });
-      const pick = await dialog.showSaveDialog(win, {
-        defaultPath: path.basename(name),
-        filters: [{ name: 'PDF', extensions: ['pdf'] }],
-      });
-      if (pick.canceled || !pick.filePath) return { saved: false as const };
-      await fs.writeFile(pick.filePath, pdf);
-      return { saved: true as const, path: pick.filePath };
+      const target = await chooseSavePath(win, name, [{ name: 'PDF', extensions: ['pdf'] }]);
+      if (!target) return { saved: false as const };
+      await fs.writeFile(target, pdf);
+      return { saved: true as const, path: target };
     });
   });
+}
+
+/** Asks the user where to save (native dialog). In test builds only, GENEEXPLORER_TEST_SAVE_DIR skips the dialog so e2e tests can save. */
+async function chooseSavePath(
+  win: BrowserWindow,
+  suggestedName: string,
+  filters: { name: string; extensions: string[] }[],
+): Promise<string | null> {
+  const name = path.basename(suggestedName); // basename: the renderer cannot pick a directory
+  if (__TEST_MODE__) {
+    const dir = process.env['GENEEXPLORER_TEST_SAVE_DIR'];
+    if (dir) return path.join(dir, name);
+  }
+  const pick = await dialog.showSaveDialog(win, { defaultPath: name, filters });
+  return pick.canceled || !pick.filePath ? null : pick.filePath;
 }
 
 function userAgent(): string {

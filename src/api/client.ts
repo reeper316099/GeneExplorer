@@ -19,6 +19,7 @@ import {
   parseNcbiOrthologs,
   parseNcbiProducts,
   parseNcbiSequenceReport,
+  parseNcbiTaxa,
   parseNcbiTaxon,
   parseNcbiTaxonSuggest,
   parseOrthoDbGroup,
@@ -154,14 +155,14 @@ export class GeneApi {
     return this.json(endpoints.uniprotSearchSymbol(symbol, taxon), o, (raw, m) => parseUniProtSearch(raw, m));
   }
 
-  /** Looks up species by name (UniProt taxonomy). */
+  /** Species autocomplete (NCBI taxon_suggest): it matches common names well ("mouse" gives Mus musculus first). */
   searchTaxa(text: string, o?: CallOptions): Promise<IpcResult<Sourced<TaxonCandidate[]>>> {
-    return this.json(endpoints.uniprotTaxonomySearch(text), o, (raw, m) => parseUniProtTaxonomy(raw, m));
+    return this.json(endpoints.ncbiTaxonSuggest(text.trim()), o, (raw, m) => parseNcbiTaxonSuggest(raw, m));
   }
 
-  /** Looks up species by name (NCBI autocomplete); an alternative source for the species picker. */
-  suggestTaxaNcbi(text: string, o?: CallOptions): Promise<IpcResult<Sourced<TaxonCandidate[]>>> {
-    return this.json(endpoints.ncbiTaxonSuggest(text), o, (raw, m) => parseNcbiTaxonSuggest(raw, m));
+  /** Species search through UniProt taxonomy (kept for reference; it ranks common names poorly). */
+  searchTaxaUniProt(text: string, o?: CallOptions): Promise<IpcResult<Sourced<TaxonCandidate[]>>> {
+    return this.json(endpoints.uniprotTaxonomySearch(text), o, (raw, m) => parseUniProtTaxonomy(raw, m));
   }
 
   /** Looks up an NCBI gene by Gene ID. */
@@ -207,6 +208,22 @@ export class GeneApi {
     o?: CallOptions,
   ): Promise<IpcResult<ReturnType<typeof parseNcbiTaxon> extends IpcResult<infer V> ? V : never>> {
     return this.json(endpoints.ncbiTaxon(id), o, (raw) => parseNcbiTaxon(raw));
+  }
+
+  /** Looks up lineages for many taxa (100 per request, one after another to stay polite). */
+  async getTaxaLineages(
+    ids: readonly TaxonId[],
+    o?: CallOptions,
+  ): Promise<IpcResult<Map<TaxonId, readonly TaxonId[]>>> {
+    const out = new Map<TaxonId, readonly TaxonId[]>();
+    // Sorted so the same species list always produces the same requests (better cache hits, deterministic tests).
+    const unique = [...new Set(ids)].sort((a, b) => a - b);
+    for (let i = 0; i < unique.length; i += 100) {
+      const r = await this.json(endpoints.ncbiTaxa(unique.slice(i, i + 100)), o, (raw) => parseNcbiTaxa(raw));
+      if (!r.ok) return r;
+      for (const [k, v] of r.value) out.set(k, v.lineageIds);
+    }
+    return { ok: true, value: out };
   }
 
   /** Fetches the AlphaFold model record; resolves to ok(null) when AlphaFold has no model (HTTP 404). */

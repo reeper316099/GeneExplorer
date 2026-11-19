@@ -3,11 +3,21 @@ import type { AppCtx } from './ctx';
 
 type Supplied = Pick<
   AppCtx,
-  'appVersion' | 'openGene' | 'search' | 'prefs' | 'updatePrefs' | 'toast' | 'showSources'
+  | 'appVersion'
+  | 'newApi'
+  | 'loadGeneView'
+  | 'openGene'
+  | 'search'
+  | 'prefs'
+  | 'updatePrefs'
+  | 'toast'
+  | 'showSources'
 >;
 
 export class AppCtxImpl implements AppCtx {
   appVersion: string;
+  newApi: AppCtx['newApi'];
+  loadGeneView: AppCtx['loadGeneView'];
   openGene: AppCtx['openGene'];
   search: AppCtx['search'];
   prefs: AppCtx['prefs'];
@@ -18,6 +28,8 @@ export class AppCtxImpl implements AppCtx {
   /** Stores the supplied callbacks. */
   constructor(s: Supplied) {
     this.appVersion = s.appVersion;
+    this.newApi = s.newApi;
+    this.loadGeneView = s.loadGeneView;
     this.openGene = s.openGene;
     this.search = s.search;
     this.prefs = s.prefs;

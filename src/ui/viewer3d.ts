@@ -119,6 +119,23 @@ export class StructureViewer {
     this.viewer?.render();
   }
 
+  /** Calls `cb` whenever the user rotates or zooms; used to keep two viewers in step. */
+  onViewChange(cb: (view: number[]) => void): void {
+    this.viewer?.setViewChangeCallback((v: unknown) => cb(v as number[]));
+  }
+
+  /** Current view as 3Dmol's array: [x, y, z, zoom, qx, qy, qz, qw]. */
+  getView(): number[] {
+    return (this.viewer?.getView() ?? []) as number[];
+  }
+
+  /** Applies only the ROTATION of another viewer's view (indices 4-7), so each structure keeps its own centre and zoom. */
+  syncRotationFrom(view: number[]): void {
+    const mine = this.getView();
+    if (mine.length < 8 || view.length < 8) return;
+    this.viewer?.setView([...mine.slice(0, 4), ...view.slice(4, 8)], true);
+  }
+
   /** Resets rotation and zoom. */
   reset(): void {
     this.viewer?.zoomTo();

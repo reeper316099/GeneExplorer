@@ -122,6 +122,7 @@ export const UniProtTaxonomySearchSchema = z.looseObject({
       taxonId: z.number(),
       rank: z.string().optional(),
       active: z.boolean().optional(),
+      hidden: z.boolean().optional(),
       statistics: z.looseObject({ reviewedProteinCount: z.number().optional() }).optional(),
     }),
   ),

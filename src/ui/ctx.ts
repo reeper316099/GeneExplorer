@@ -1,4 +1,5 @@
 // Shared context handed to every view, plus small helpers for provenance and clipboard/link actions.
+import type { GeneApi } from '../api/client';
 import type { GeneView } from '../core/gene-view';
 import type { Sourced } from '../shared/types';
 import { fmtTime, h } from './dom';
@@ -46,6 +47,12 @@ export interface AppCtx {
   toast(message: string): void;
   /** Opens the sources drawer for the current gene. */
   showSources(view: GeneView): void;
+  /** A fresh API client whose requests can be cancelled together (for views that load their own data). */
+  newApi(): { api: GeneApi; cancel: () => void };
+  /** Loads another gene (resolve + panels) for the Compare view. */
+  loadGeneView(
+    target: Target,
+  ): Promise<{ ok: true; view: GeneView; cancel: () => void } | { ok: false; message: string }>;
   /** Copies text to the clipboard with a toast. */
   copy(text: string, what: string): void;
 }

@@ -313,7 +313,7 @@ describe('buildComparison', () => {
       { protein: b },
     );
     const text = m.warnings.join(' ');
-    expect(text).toContain('below 25%');
+    expect(text).toContain('below 30%');
     expect(text).toContain('unreviewed');
     expect(text).toContain('low overall confidence');
     expect(text).toContain('different sequence');

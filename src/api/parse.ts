@@ -249,7 +249,8 @@ export function parseUniProtTaxonomy(raw: unknown, meta: FetchMeta): IpcResult<S
   const out: TaxonCandidate[] = [];
   for (const r of v.value.results) {
     const id = parseTaxonId(r.taxonId);
-    if (!id || r.active === false) continue;
+    // Hidden taxa (for example metagenomes) are not real species a user means; skip them.
+    if (!id || r.active === false || r.hidden === true) continue;
     out.push({
       id,
       scientificName: r.scientificName,
@@ -260,6 +261,8 @@ export function parseUniProtTaxonomy(raw: unknown, meta: FetchMeta): IpcResult<S
         : {}),
     });
   }
+  // Species with more reviewed proteins first (so "mouse" offers Mus musculus before obscure taxa); ties keep UniProt's order.
+  out.sort((x, y) => (y.reviewedProteinCount ?? 0) - (x.reviewedProteinCount ?? 0));
   return { ok: true, value: sourced(out, 'UniProt', 'taxonomy-search', meta) };
 }
 
@@ -691,4 +694,27 @@ export function parseNcbiSequenceReport(raw: unknown, accession: string): IpcRes
       moleculeType: r.assigned_molecule_location_type ?? 'unknown',
     },
   };
+}
+
+/** Parses a batch taxonomy answer into a lineage map (taxon ID -> its ancestor IDs); unknown IDs are simply absent. */
+export function parseNcbiTaxa(
+  raw: unknown,
+): IpcResult<Map<TaxonId, { taxon: TaxonInfo; lineageIds: TaxonId[] }>> {
+  const v = validate(NcbiTaxonNodeSchema, raw, 'NCBI taxonomy');
+  if (!v.ok) return v;
+  const out = new Map<TaxonId, { taxon: TaxonInfo; lineageIds: TaxonId[] }>();
+  for (const n of v.value.taxonomy_nodes) {
+    const t = n.taxonomy;
+    const id = parseTaxonId(t.tax_id);
+    if (!id) continue;
+    out.set(id, {
+      taxon: {
+        id,
+        scientificName: t.organism_name,
+        ...(t.genbank_common_name ? { commonName: t.genbank_common_name } : {}),
+      },
+      lineageIds: (t.lineage ?? []).map(parseTaxonId).filter((x): x is TaxonId => x !== null),
+    });
+  }
+  return { ok: true, value: out };
 }

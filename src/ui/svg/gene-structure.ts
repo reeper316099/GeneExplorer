@@ -24,7 +24,7 @@ export function structureStats(t: Transcript): StructureStats | null {
 }
 
 /** Draws the transcript's exon/intron structure (genomic coordinates increase left to right; arrows show the gene's strand). */
-export function geneStructureSvg(t: Transcript): SVGSVGElement | null {
+export function geneStructureSvg(t: Transcript, commonSpan?: number): SVGSVGElement | null {
   const stats = structureStats(t);
   if (!stats) return null;
   const W = 1000;
@@ -33,7 +33,8 @@ export function geneStructureSvg(t: Transcript): SVGSVGElement | null {
   const H = 120;
   const begin = Math.min(...t.exons.map((e) => e.begin));
   const end = Math.max(...t.exons.map((e) => e.end));
-  const scale = (W - padL - padR) / Math.max(1, end - begin + 1);
+  // With `commonSpan` (bp) the drawing uses that many bp across the full width, so two genes share one scale.
+  const scale = (W - padL - padR) / Math.max(1, commonSpan ?? end - begin + 1);
   const x = (pos: number): number => padL + (pos - begin) * scale;
   const mid = 46;
   const svg = s('svg', {
@@ -92,7 +93,7 @@ export function geneStructureSvg(t: Transcript): SVGSVGElement | null {
     ),
   );
   // Scale bar.
-  const bar = niceLength((end - begin + 1) / 4);
+  const bar = niceLength((commonSpan ?? end - begin + 1) / 4);
   const by = 100;
   svg.append(
     s('line', { x1: padL, y1: by, x2: padL + bar * scale, y2: by, stroke: 'var(--text)', 'stroke-width': 2 }),

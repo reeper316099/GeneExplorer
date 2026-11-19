@@ -53,6 +53,8 @@ export interface CompareOptions {
   orthologCalls?: readonly OrthologCall[];
   /** Only residues with at least this pLDDT are used for superposition. Default 70. */
   plddtCutoff?: number;
+  /** A finished alignment (for example from the worker); when absent the alignment is computed here. */
+  alignment?: AlignResult;
 }
 
 /** Maps a feature range through aligned pairs (0-based residue indices) onto the other sequence. */
@@ -81,7 +83,7 @@ export function buildComparison(a: CompareSide, b: CompareSide, options: Compare
   const cutoff = options.plddtCutoff ?? 70;
   const pa = a.protein.value;
   const pb = b.protein.value;
-  const alignment = alignGlobal(pa.sequence, pb.sequence);
+  const alignment = options.alignment ?? alignGlobal(pa.sequence, pb.sequence);
   const sameSpecies = pa.taxon.id === pb.taxon.id;
   const warnings: string[] = [];
 
@@ -123,10 +125,10 @@ export function buildComparison(a: CompareSide, b: CompareSide, options: Compare
   if (!alignment.ok) warnings.push(alignment.message);
   else if (
     alignment.alignment.identity.overAligned !== null &&
-    alignment.alignment.identity.overAligned < 0.25
+    alignment.alignment.identity.overAligned < 0.3
   ) {
     warnings.push(
-      'Identity is below 25%: in this range sequence similarity alone cannot show that two proteins are related.',
+      'Identity is below 30%: in this range sequence similarity alone cannot show that two proteins are related.',
     );
   }
 

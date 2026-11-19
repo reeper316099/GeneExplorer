@@ -50,6 +50,16 @@ for (const theme of ['light', 'dark']) {
   await page.waitForTimeout(2500);
   await page.setViewportSize({ width: 1280, height: 2500 });
   await page.screenshot({ path: `${OUT}/${theme}-5-protein.png` });
+  await page.getByRole('tab', { name: 'Species' }).click();
+  await page.waitForSelector('svg[aria-label^="Species per lineage group"]');
+  await page.screenshot({ path: `${OUT}/${theme}-5b-species.png` });
+  await page.getByRole('tab', { name: 'Compare' }).click();
+  await page.getByLabel('Gene B symbol or ID').fill('22059');
+  await page.getByRole('button', { name: 'Use this gene as B' }).click();
+  await page.waitForSelector('text=Identity', { timeout: 30000 });
+  await page.waitForTimeout(3000);
+  await page.setViewportSize({ width: 1280, height: 3600 });
+  await page.screenshot({ path: `${OUT}/${theme}-5c-compare.png` });
   await page.getByRole('button', { name: 'About & limits' }).click();
   await page.setViewportSize({ width: 1280, height: 1400 });
   await page.screenshot({ path: `${OUT}/${theme}-6-about.png` });

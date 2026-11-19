@@ -503,3 +503,71 @@ th {
   overflow: auto;
   z-index: 50;
 }
+
+/* ---- print (PDF report) ---- */
+.report-sheet {
+  display: none;
+}
+@media print {
+  @page {
+    margin: 14mm;
+  }
+  :root,
+  :root[data-theme='dark'],
+  :root:not([data-theme='light']) {
+    --text: #14202e;
+    --text-muted: #46566a;
+    --surface: #fff;
+    --surface-2: #eaf0f7;
+    --border: #ccd6e2;
+    --accent: #1e5aa8;
+    --highlight: #e11d74;
+    --cat-1: #0072b2;
+  }
+  body.printing {
+    overflow: visible;
+    height: auto;
+    background: #fff;
+    color: #000;
+  }
+  body.printing #app {
+    display: none;
+  }
+  body.printing .report-sheet {
+    display: block;
+    font-size: 11pt;
+    line-height: 1.4;
+    color: #000;
+  }
+  .report-sheet h1 {
+    font-size: 20pt;
+    margin: 0 0 4px;
+  }
+  .report-sheet h2 {
+    font-size: 14pt;
+    border-bottom: 1px solid #888;
+    margin: 18px 0 6px;
+  }
+  .report-sheet .rep-sec {
+    break-inside: avoid-page;
+  }
+  .report-sheet table,
+  .report-sheet svg,
+  .report-sheet img {
+    break-inside: avoid;
+    max-width: 100%;
+  }
+  .report-sheet .muted {
+    color: #444;
+  }
+  .report-sheet .kv {
+    display: grid;
+    grid-template-columns: 170px 1fr;
+    gap: 2px 12px;
+  }
+  .report-sheet th,
+  .report-sheet td {
+    border-bottom: 1px solid #ccc;
+    font-size: 10pt;
+  }
+}

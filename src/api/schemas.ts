@@ -251,8 +251,9 @@ export const AlphaFoldListSchema = z.array(
 
 // ---------- OrthoDB ----------
 
+// When no group contains the protein OrthoDB answers with data: null and bigdata: null (found by the live smoke test on rbcL).
 export const OrthoDbSearchSchema = z.looseObject({
-  data: z.array(z.string()),
+  data: z.array(z.string()).nullable(),
   status: z.string().optional(),
   bigdata: z
     .array(
@@ -264,6 +265,7 @@ export const OrthoDbSearchSchema = z.looseObject({
         present_in: z.union([z.string(), z.number()]).optional(),
       }),
     )
+    .nullable()
     .optional(),
 });
 

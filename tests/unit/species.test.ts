@@ -26,6 +26,7 @@ import {
   buildRows,
   cladeCounts,
   coverageStatement,
+  describeCandidates,
   filterRows,
   orthologCsv,
   sortRows,
@@ -272,5 +273,17 @@ describe('alignment views', () => {
     expect(withProgress.ok && without.ok && withProgress.alignment.score === without.alignment.score).toBe(
       true,
     );
+  });
+});
+
+describe('ortholog candidate situations (the one-to-many pick flow)', () => {
+  it('requires an explicit choice when several genes are listed, and never calls zero a proof of absence', () => {
+    expect(describeCandidates(2, 'X', 'Danio rerio')).toMatchObject({ kind: 'many' });
+    expect(describeCandidates(2, 'X', 'Danio rerio').message).toContain('none is picked for you');
+    expect(describeCandidates(3, 'X', 'Danio rerio').message).toContain('3 genes');
+    expect(describeCandidates(1, 'X', 'Danio rerio').kind).toBe('one');
+    const none = describeCandidates(0, 'X', 'Danio rerio');
+    expect(none.kind).toBe('none');
+    expect(none.message).toContain('not the same as the species lacking the gene');
   });
 });

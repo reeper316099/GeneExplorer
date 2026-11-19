@@ -363,7 +363,10 @@ async function start(): Promise<void> {
     // Dead code in production builds (esbuild removes the whole branch and the testmode module).
     const testmode = await import('./testmode');
     if (testmode.isTestModeEnabled(process.env, app.isPackaged)) {
-      fetchImpl = testmode.createFixtureFetch(path.join(app.getAppPath(), 'tests', 'fixtures', 'api'));
+      fetchImpl = testmode.createFixtureFetch(
+        path.join(app.getAppPath(), 'tests', 'fixtures', 'api'),
+        testmode.parseRateLimitSim(process.env['GENEEXPLORER_TEST_RATELIMIT']),
+      );
     }
   }
   netClient = new NetClient({ fetchImpl, cache, userAgent: userAgent() });
@@ -388,5 +391,7 @@ if (!app.requestSingleInstanceLock()) {
     }
   });
   app.on('window-all-closed', () => app.quit());
+  // Make sure the last preference change (theme, favorites) reaches disk even if the user quits right after making it.
+  app.on('before-quit', () => session.defaultSession.flushStorageData());
   void app.whenReady().then(start);
 }

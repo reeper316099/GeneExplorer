@@ -64,6 +64,28 @@ for (const theme of ['light', 'dark']) {
   await page.setViewportSize({ width: 1280, height: 1400 });
   await page.screenshot({ path: `${OUT}/${theme}-6-about.png` });
 }
+// A non-human gene (bacterial lacZ) in both themes.
+for (const theme of ['light', 'dark']) {
+  await setTheme(theme);
+  await page.setViewportSize({ width: 1280, height: 1500 });
+  await page.getByRole('button', { name: 'New search' }).click();
+  await page.getByRole('button', { name: 'lacZ · E. coli', exact: true }).click();
+  await page.waitForSelector('.geneheader');
+  await page.waitForTimeout(2500);
+  await page.screenshot({ path: `${OUT}/${theme}-8-lacz-overview.png` });
+  await page.getByRole('tab', { name: 'Location' }).click();
+  await page.waitForSelector('svg[aria-label^="Gene structure"]');
+  await page.screenshot({ path: `${OUT}/${theme}-9-lacz-location.png` });
+  await page.getByRole('tab', { name: 'Protein & Structure' }).click();
+  await page.waitForSelector('.viewer-wrap canvas');
+  await page.waitForTimeout(2500);
+  await page.setViewportSize({ width: 1280, height: 2500 });
+  await page.screenshot({ path: `${OUT}/${theme}-10-lacz-protein.png` });
+  await page.getByRole('tab', { name: 'Species' }).click();
+  await page.waitForSelector('.notice');
+  await page.waitForTimeout(1500);
+  await page.screenshot({ path: `${OUT}/${theme}-11-lacz-species.png` });
+}
 // Minimum supported window size.
 await setTheme('light');
 await page.setViewportSize({ width: 1200, height: 760 });

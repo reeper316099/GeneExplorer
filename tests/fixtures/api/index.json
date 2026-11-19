@@ -350,7 +350,7 @@
       "status": 200,
       "file": "ncbi-orthologs-tp53-all.json",
       "bytes": 1332251,
-      "recordedAt": "2026-11-19T04:55:33.203Z",
+      "recordedAt": "2026-11-19T05:56:24.746Z",
       "note": "All NCBI orthologs of human TP53",
       "label": "REAL recorded response"
     },
@@ -361,7 +361,7 @@
       "status": 200,
       "file": "ncbi-taxa-tp53-batch0.json",
       "bytes": 84604,
-      "recordedAt": "2026-11-19T04:55:33.931Z",
+      "recordedAt": "2026-11-19T05:56:25.551Z",
       "note": "Lineages of TP53 ortholog species",
       "label": "REAL recorded response"
     },
@@ -372,7 +372,7 @@
       "status": 200,
       "file": "ncbi-taxa-tp53-batch1.json",
       "bytes": 84891,
-      "recordedAt": "2026-11-19T04:55:34.702Z",
+      "recordedAt": "2026-11-19T05:56:26.352Z",
       "note": "Lineages of TP53 ortholog species",
       "label": "REAL recorded response"
     },
@@ -383,7 +383,7 @@
       "status": 200,
       "file": "ncbi-taxa-tp53-batch2.json",
       "bytes": 83015,
-      "recordedAt": "2026-11-19T04:55:35.445Z",
+      "recordedAt": "2026-11-19T05:56:27.066Z",
       "note": "Lineages of TP53 ortholog species",
       "label": "REAL recorded response"
     },
@@ -394,7 +394,7 @@
       "status": 200,
       "file": "ncbi-taxa-tp53-batch3.json",
       "bytes": 81390,
-      "recordedAt": "2026-11-19T04:55:36.641Z",
+      "recordedAt": "2026-11-19T05:56:27.810Z",
       "note": "Lineages of TP53 ortholog species",
       "label": "REAL recorded response"
     },
@@ -405,7 +405,7 @@
       "status": 200,
       "file": "ncbi-taxa-tp53-batch4.json",
       "bytes": 81599,
-      "recordedAt": "2026-11-19T04:55:37.421Z",
+      "recordedAt": "2026-11-19T05:56:28.545Z",
       "note": "Lineages of TP53 ortholog species",
       "label": "REAL recorded response"
     },
@@ -416,7 +416,7 @@
       "status": 200,
       "file": "ncbi-taxa-tp53-batch5.json",
       "bytes": 82265,
-      "recordedAt": "2026-11-19T04:55:38.220Z",
+      "recordedAt": "2026-11-19T05:56:29.362Z",
       "note": "Lineages of TP53 ortholog species",
       "label": "REAL recorded response"
     },
@@ -427,7 +427,7 @@
       "status": 200,
       "file": "ncbi-taxa-tp53-batch6.json",
       "bytes": 55281,
-      "recordedAt": "2026-11-19T04:55:38.979Z",
+      "recordedAt": "2026-11-19T05:56:30.202Z",
       "note": "Lineages of TP53 ortholog species",
       "label": "REAL recorded response"
     },
@@ -438,7 +438,7 @@
       "status": 200,
       "file": "orthodb-search-p04637.json",
       "bytes": 2133,
-      "recordedAt": "2026-11-19T04:55:39.609Z",
+      "recordedAt": "2026-11-19T05:56:30.777Z",
       "note": "OrthoDB groups containing human TP53",
       "label": "REAL recorded response"
     },
@@ -449,7 +449,7 @@
       "status": 200,
       "file": "orthodb-group-tp53.json",
       "bytes": 2942,
-      "recordedAt": "2026-11-19T04:55:39.771Z",
+      "recordedAt": "2026-11-19T05:56:30.940Z",
       "note": "OrthoDB group details",
       "label": "REAL recorded response"
     },
@@ -460,7 +460,7 @@
       "status": 200,
       "file": "orthodb-orthologs-tp53-all.json",
       "bytes": 668140,
-      "recordedAt": "2026-11-19T04:55:41.317Z",
+      "recordedAt": "2026-11-19T05:56:32.516Z",
       "note": "All members of the Eukaryota TP53 group",
       "label": "REAL recorded response"
     },
@@ -471,7 +471,7 @@
       "status": 200,
       "file": "ncbi-gene-mouse-trp53.json",
       "bytes": 59234,
-      "recordedAt": "2026-11-19T04:55:41.522Z",
+      "recordedAt": "2026-11-19T05:56:32.731Z",
       "note": "Mouse Trp53 gene report",
       "label": "REAL recorded response"
     },
@@ -482,7 +482,7 @@
       "status": 200,
       "file": "ncbi-product-mouse-trp53.json",
       "bytes": 5862,
-      "recordedAt": "2026-11-19T04:55:41.861Z",
+      "recordedAt": "2026-11-19T05:56:33.034Z",
       "note": "Mouse Trp53 transcripts",
       "label": "REAL recorded response"
     },
@@ -493,7 +493,7 @@
       "status": 200,
       "file": "ncbi-seqreport-mouse-chr11.json",
       "bytes": 389,
-      "recordedAt": "2026-11-19T04:55:42.036Z",
+      "recordedAt": "2026-11-19T05:56:33.276Z",
       "note": "Mouse chromosome 11 length",
       "label": "REAL recorded response"
     },
@@ -504,7 +504,7 @@
       "status": 200,
       "file": "uniprot-entry-mouse-p53.json",
       "bytes": 53954,
-      "recordedAt": "2026-11-19T04:55:42.731Z",
+      "recordedAt": "2026-11-19T05:56:33.972Z",
       "note": "Mouse p53 UniProt entry",
       "label": "REAL recorded response"
     },
@@ -515,7 +515,7 @@
       "status": 200,
       "file": "alphafold-mouse-p53.json",
       "bytes": 2239,
-      "recordedAt": "2026-11-19T04:55:42.953Z",
+      "recordedAt": "2026-11-19T05:56:34.347Z",
       "note": "AlphaFold prediction list, mouse p53",
       "label": "REAL recorded response"
     },
@@ -526,7 +526,7 @@
       "status": 200,
       "file": "alphafold-mouse-p53-model.pdb",
       "bytes": 253124,
-      "recordedAt": "2026-11-19T04:55:43.261Z",
+      "recordedAt": "2026-11-19T05:56:34.674Z",
       "note": "AlphaFold model, mouse p53",
       "label": "REAL recorded response"
     },
@@ -537,7 +537,7 @@
       "status": 200,
       "file": "ncbi-orthologs-tp53-mouse.json",
       "bytes": 59233,
-      "recordedAt": "2026-11-19T04:55:43.613Z",
+      "recordedAt": "2026-11-19T05:56:34.972Z",
       "note": "NCBI orthologs of TP53 filtered to mouse",
       "label": "REAL recorded response"
     },
@@ -548,8 +548,30 @@
       "status": 200,
       "file": "ncbi-taxon-suggest-mouse.json",
       "bytes": 1981,
-      "recordedAt": "2026-11-19T04:55:43.811Z",
+      "recordedAt": "2026-11-19T05:56:35.140Z",
       "note": "Species autocomplete for \"mouse\"",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "orthodb-search-o03042",
+      "method": "GET",
+      "url": "https://data.orthodb.org/v12/search?query=O03042&limit=30",
+      "status": 200,
+      "file": "orthodb-search-o03042.json",
+      "bytes": 78,
+      "recordedAt": "2026-11-19T05:56:36.922Z",
+      "note": "OrthoDB search with no group (rbcL): data and bigdata are null",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "alphafold-lacz-model",
+      "method": "GET",
+      "url": "https://alphafold.ebi.ac.uk/files/AF-P00722-F1-model_v6.pdb",
+      "status": 200,
+      "file": "alphafold-lacz-model.pdb",
+      "bytes": 676268,
+      "recordedAt": "2026-11-19T05:56:37.477Z",
+      "note": "AlphaFold model, E. coli lacZ",
       "label": "REAL recorded response"
     },
     {
@@ -559,7 +581,7 @@
       "status": 200,
       "file": "ncbi-gene-id-lacz.json",
       "bytes": 3294,
-      "recordedAt": "2026-11-19T04:55:44.031Z",
+      "recordedAt": "2026-11-19T05:56:37.755Z",
       "note": "E. coli lacZ gene report by ID",
       "label": "REAL recorded response"
     },
@@ -570,7 +592,7 @@
       "status": 200,
       "file": "ncbi-orthologs-lacz.json",
       "bytes": 3294,
-      "recordedAt": "2026-11-19T04:55:44.655Z",
+      "recordedAt": "2026-11-19T05:56:38.094Z",
       "note": "NCBI orthologs of E. coli lacZ",
       "label": "REAL recorded response"
     },
@@ -581,8 +603,63 @@
       "status": 200,
       "file": "orthodb-search-p00722.json",
       "bytes": 1268,
-      "recordedAt": "2026-11-19T04:55:45.606Z",
+      "recordedAt": "2026-11-19T05:56:42.824Z",
       "note": "OrthoDB groups containing lacZ",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "symbol_any_TP53-1",
+      "method": "GET",
+      "url": "https://rest.uniprot.org/uniprotkb/search?query=gene_exact%3ATP53&fields=accession,id,gene_primary,protein_name,organism_name,reviewed,organism_id,length&size=25",
+      "status": 200,
+      "file": "symbol_any_TP53-1.json",
+      "bytes": 16928,
+      "recordedAt": "2026-11-19T06:00:56.088Z",
+      "note": "recorded for symbol-any TP53",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "ensembl_ENSG00000141510-1",
+      "method": "GET",
+      "url": "https://rest.uniprot.org/uniprotkb/search?query=xref%3Aensembl-ENSG00000141510&fields=accession,id,gene_primary,protein_name,organism_name,reviewed,organism_id,length&size=15",
+      "status": 200,
+      "file": "ensembl_ENSG00000141510-1.json",
+      "bytes": 14505,
+      "recordedAt": "2026-11-19T06:01:03.989Z",
+      "note": "recorded for ensembl ENSG00000141510",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "refseq_NM_000546_6-1",
+      "method": "GET",
+      "url": "https://api.ncbi.nlm.nih.gov/datasets/v2/gene/accession/NM_000546.6",
+      "status": 200,
+      "file": "refseq_NM_000546_6-1.json",
+      "bytes": 39371,
+      "recordedAt": "2026-11-19T06:01:04.633Z",
+      "note": "recorded for refseq NM_000546.6",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "orthologs_5080_7955-1",
+      "method": "GET",
+      "url": "https://api.ncbi.nlm.nih.gov/datasets/v2/gene/id/5080/orthologs?taxon_filter=7955",
+      "status": 200,
+      "file": "orthologs_5080_7955-1.json",
+      "bytes": 7748,
+      "recordedAt": "2026-11-19T06:01:05.554Z",
+      "note": "recorded for orthologs 5080",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "text_tumor_protein_p53-1",
+      "method": "GET",
+      "url": "https://rest.uniprot.org/uniprotkb/search?query=tumor%20protein%20p53&fields=accession,id,gene_primary,protein_name,organism_name,reviewed,organism_id,length&size=15",
+      "status": 200,
+      "file": "text_tumor_protein_p53-1.json",
+      "bytes": 10190,
+      "recordedAt": "2026-11-19T06:01:06.741Z",
+      "note": "recorded for text tumor protein p53",
       "label": "REAL recorded response"
     }
   ]

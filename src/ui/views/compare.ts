@@ -20,7 +20,8 @@ import type { GeneRecord, OrthologCall, TaxonCandidate, Transcript } from '../..
 import { parseTaxonId } from '../../shared/ids';
 import { runAlignment } from '../align-client';
 import type { AlignJob } from '../align-client';
-import type { AppCtx, Scope } from '../ctx';
+import { Scope } from '../ctx';
+import type { AppCtx } from '../ctx';
 import { provTitle } from '../ctx';
 import { fmt, h, setChildren } from '../dom';
 import { proteinHeader } from '../exports';
@@ -28,6 +29,8 @@ import type { Target } from '../prefs';
 import { alignmentOverviewSvg } from '../svg/alignment-overview';
 import { geneStructureSvg, structureStats } from '../svg/gene-structure';
 import { StructureViewer } from '../viewer3d';
+import { overlayCard } from './overlay';
+import { describeCandidates } from '../../core/ortholog-table';
 import { friendlyError, renderLoadable } from './panel';
 
 /** Holds the chosen gene B across tab switches so returning to the tab does not reload it. */
@@ -150,21 +153,13 @@ export function compareTab(ctx: AppCtx, a: GeneView, scope: Scope, hub: CompareH
         h('button', { class: 'btn', type: 'button', onclick: () => void findOrtholog() }, 'Retry'),
       );
     const calls = r.value.filter((c) => c.value.geneId !== a.gene?.value.geneId);
-    if (calls.length === 0) {
-      return setChildren(
-        msg,
-        h(
-          'div',
-          { class: 'notice warn' },
-          `NCBI Orthologs lists no ortholog of ${a.gene.value.symbol} in ${taxon.scientificName}. That is not the same as the species lacking the gene. You can still choose any gene below to compare, but it will not be presented as an ortholog.`,
-        ),
-      );
-    }
-    const note =
-      calls.length > 1
-        ? `NCBI lists ${calls.length} genes in ${taxon.scientificName} (a one-to-many relationship, for example after a gene duplication). Choose the one you want; none is picked for you.`
-        : `NCBI lists one gene in ${taxon.scientificName}. It is shown for you to confirm.`;
-    setChildren(msg, h('div', { class: 'notice info' }, note), ...calls.map((c) => candidate(c)));
+    const sit = describeCandidates(calls.length, a.gene.value.symbol, taxon.scientificName);
+    if (sit.kind === 'none') return setChildren(msg, h('div', { class: 'notice warn' }, sit.message));
+    setChildren(
+      msg,
+      h('div', { class: sit.kind === 'many' ? 'notice warn' : 'notice info' }, sit.message),
+      ...calls.map((c) => candidate(c)),
+    );
   };
   /** One candidate button for an ortholog call. */
   const candidate = (c: OrthologCall): HTMLElement =>
@@ -296,6 +291,9 @@ export function compareTab(ctx: AppCtx, a: GeneView, scope: Scope, hub: CompareH
   let orthologsFor = '';
   let structureKey = '';
   const structureBox = h('div');
+  const overlayBox = h('div');
+  let overlayKey = '';
+  let overlayScope: Scope | null = null;
   let commonScale = false;
 
   /** Redraws the whole comparison for the current A and B. */
@@ -478,10 +476,11 @@ export function compareTab(ctx: AppCtx, a: GeneView, scope: Scope, hub: CompareH
       ),
     );
 
-    // Structures
-    sections.push(structureBox);
+    // Structures, then the overlay of the two
+    sections.push(structureBox, overlayBox);
     setChildren(body, ...sections);
     drawStructures(b);
+    drawOverlay(b, aln);
     function structureCard(ta: Transcript | null, tb2: Transcript | null, bLabel: string): HTMLElement {
       const card = h('div', { class: 'card diagram' }, h('h3', {}, 'Gene structure'));
       const toggle = h(
@@ -642,16 +641,23 @@ export function compareTab(ctx: AppCtx, a: GeneView, scope: Scope, hub: CompareH
           { style: 'white-space:pre' },
           h('span', { class: 'muted' }, `${String(n ?? '').padStart(6, ' ')} `),
         );
-        for (let i = 0; i < txt.length; i++)
-          row.append(
-            h(
-              'span',
-              {
-                ...(txt[i] === other[i] && txt[i] !== '-' ? { style: 'background:var(--highlight-bg)' } : {}),
-              },
-              txt.charAt(i),
-            ),
-          );
+        // Runs of identical / non-identical residues become one span each (about 10x fewer DOM nodes than one per residue).
+        let start = 0;
+        const flush = (end: number, same: boolean): void => {
+          if (end <= start) return;
+          const text = txt.slice(start, end);
+          row.append(same ? h('span', { style: 'background:var(--highlight-bg)' }, text) : text);
+          start = end;
+        };
+        let runSame = txt[0] === other[0] && txt[0] !== '-';
+        for (let i = 1; i < txt.length; i++) {
+          const same = txt[i] === other[i] && txt[i] !== '-';
+          if (same !== runSame) {
+            flush(i, runSame);
+            runSame = same;
+          }
+        }
+        flush(txt.length, runSame);
         return row;
       };
       wrap.append(
@@ -682,6 +688,31 @@ export function compareTab(ctx: AppCtx, a: GeneView, scope: Scope, hub: CompareH
         'Export alignment (FASTA)',
       ),
     );
+  }
+
+  /** Draws the overlay card, rebuilt only when the structures, alignment or pair change. */
+  function drawOverlay(b: NonNullable<typeof hub.b>, aln: AlignResult | undefined): void {
+    const al = aln?.ok ? aln.alignment : null;
+    const key = `${a.structure.status}:${b.view.structure.status}:${alignKey()}:${al ? 'aln' : 'none'}`;
+    if (key === overlayKey && overlayBox.childNodes.length > 0) return;
+    overlayKey = key;
+    overlayScope?.dispose();
+    overlayScope = new Scope();
+    const sc = overlayScope;
+    scope.add(() => sc.dispose());
+    if (!aln) {
+      setChildren(
+        overlayBox,
+        h(
+          'div',
+          { class: 'card' },
+          h('h3', {}, 'Structure overlay'),
+          h('div', { class: 'notice info' }, 'Waiting for the sequence alignment…'),
+        ),
+      );
+      return;
+    }
+    setChildren(overlayBox, overlayCard(ctx, a, b.view, labelA, b.label, al, sc));
   }
 
   /** Draws the two 3D viewers (rebuilt only when either structure state changes). */

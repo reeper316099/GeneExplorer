@@ -120,7 +120,8 @@ test('Compare (close pair): human TP53 vs mouse Trp53 with table, alignment, fea
   await expect(p).toContainText('GO term comparison');
   await expect(p).toContainText('Jaccard');
   await expect(p.locator('svg[aria-label^="Gene structure"]')).toHaveCount(2, { timeout: 20000 });
-  await expect(p.locator('.viewer-wrap canvas')).toHaveCount(2, { timeout: 30000 });
+  // two structure viewers plus the overlay viewer
+  await expect(p.locator('.viewer-wrap canvas')).toHaveCount(3, { timeout: 30000 });
   await p.getByLabel(/common scale/).check();
   await expect(p.locator('svg[aria-label^="Gene structure"]')).toHaveCount(2);
   await p.getByRole('button', { name: 'Export alignment (FASTA)' }).click();
@@ -187,3 +188,43 @@ function readdirSafe(): string[] {
     return [];
   }
 }
+
+test('Structure overlay (close pair): RMSD with counts, adjustable pLDDT threshold, distance plot and exports', async () => {
+  await open('TP53 · human', 'TP53');
+  await win.getByRole('tab', { name: 'Compare' }).click();
+  const p = win.locator('[role=tabpanel]');
+  await p.getByLabel('Gene B symbol or ID').fill('22059');
+  await p.getByRole('button', { name: 'Use this gene as B' }).click();
+  const live = p.locator('p[aria-live=polite]', { hasText: 'RMSD' });
+  await expect(live).toContainText(/RMSD \d+\.\d\d Å over \d+ of \d+ aligned positions/, { timeout: 60000 });
+  const used = async (): Promise<number> => Number(/over (\d+) of/.exec((await live.innerText()) ?? '')?.[1]);
+  const at70 = await used();
+  await p.getByLabel('pLDDT threshold').fill('90');
+  await expect.poll(used).toBeLessThan(at70);
+  await p.getByLabel('pLDDT threshold').fill('50');
+  await expect.poll(used).toBeGreaterThan(at70);
+  await expect(p).toContainText('Flexible loops and low-confidence regions are left out on purpose');
+  await expect(p).toContainText('not an experimental measurement');
+  await expect(p.locator('svg[aria-label^="Distance between paired"]')).toHaveCount(1);
+  await expect(p.getByText(/B \(orange, moved onto A\)/)).toBeVisible();
+  await expect(p.locator('.viewer-wrap canvas')).toHaveCount(3, { timeout: 30000 });
+  await p.getByRole('button', { name: 'Export aligned positions (CSV)' }).click();
+  await expect.poll(() => existsSync(path.join(saveDir, 'aligned-positions.csv'))).toBe(true);
+  const csv = readFileSync(path.join(saveDir, 'aligned-positions.csv'), 'utf8');
+  expect(csv).toContain('RMSD');
+  expect(csv).toContain('used_for_superposition');
+  await p.getByLabel('pLDDT threshold').fill('100');
+  await expect(p).toContainText('No overlay made', { timeout: 20000 });
+  await expect(p).toContainText('Lower the threshold');
+});
+
+test('Structure overlay refuses a dissimilar pair and shows the identity (human TP53 vs E. coli lacZ)', async () => {
+  await open('TP53 · human', 'TP53');
+  await win.getByRole('tab', { name: 'Compare' }).click();
+  const p = win.locator('[role=tabpanel]');
+  await p.getByLabel('Gene B symbol or ID').fill('945006');
+  await p.getByRole('button', { name: 'Use this gene as B' }).click();
+  await expect(p).toContainText('No overlay made', { timeout: 60000 });
+  await expect(p).toContainText('below the 30%');
+  await expect(p).toContainText(/Sequence identity \(aligned positions\): \d+\.\d%/);
+});

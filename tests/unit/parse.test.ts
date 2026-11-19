@@ -187,6 +187,10 @@ describe('OrthoDB', () => {
       expect(c.value.geneId).toBeUndefined();
     }
   });
+  it('treats an OrthoDB search with no group (data and bigdata null) as an empty list, not a changed format', () => {
+    const hits = ok(parseOrthoDbSearch(fixtureJson('orthodb-search-o03042'), meta()));
+    expect(hits.value).toEqual([]);
+  });
   it('parses group details for the bacterial lacZ group', () => {
     const g = ok(parseOrthoDbGroup(fixtureJson('orthodb-group-bacterial'), meta()));
     expect(g.source).toBe('OrthoDB');

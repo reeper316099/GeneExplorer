@@ -67,3 +67,27 @@ export function plddtBand(plddt: number): 'very_high' | 'confident' | 'low' | 'v
   if (plddt > 50) return 'low';
   return 'very_low';
 }
+
+/** Applies a rigid transform (row-major rotation + translation) to every ATOM/HETATM coordinate of PDB text, keeping all other columns. */
+export function transformPdb(
+  text: string,
+  rotation: readonly number[],
+  translation: readonly [number, number, number],
+): string {
+  const r = rotation;
+  const fmt = (v: number): string => v.toFixed(3).padStart(8, ' ');
+  return text
+    .split('\n')
+    .map((line) => {
+      if (!(line.startsWith('ATOM  ') || line.startsWith('HETATM'))) return line;
+      const x = Number(line.slice(30, 38));
+      const y = Number(line.slice(38, 46));
+      const z = Number(line.slice(46, 54));
+      if (![x, y, z].every(Number.isFinite)) return line;
+      const nx = (r[0] ?? 0) * x + (r[1] ?? 0) * y + (r[2] ?? 0) * z + translation[0];
+      const ny = (r[3] ?? 0) * x + (r[4] ?? 0) * y + (r[5] ?? 0) * z + translation[1];
+      const nz = (r[6] ?? 0) * x + (r[7] ?? 0) * y + (r[8] ?? 0) * z + translation[2];
+      return `${line.slice(0, 30)}${fmt(nx)}${fmt(ny)}${fmt(nz)}${line.slice(54)}`;
+    })
+    .join('\n');
+}

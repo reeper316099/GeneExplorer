@@ -135,6 +135,18 @@ async function main(): Promise<void> {
     'Species autocomplete for "mouse"',
   );
   const lacz = need(parseNcbiGeneId('945006'));
+  await put(
+    'orthodb-search-o03042',
+    endpoints.orthodbSearch(need(parseUniProtAccession('O03042'))),
+    'OrthoDB search with no group (rbcL): data and bigdata are null',
+  );
+  await put(
+    'alphafold-lacz-model',
+    'https://alphafold.ebi.ac.uk/files/AF-P00722-F1-model_v6.pdb',
+    'AlphaFold model, E. coli lacZ',
+    'text',
+    'pdb',
+  );
   await put('ncbi-gene-id-lacz', endpoints.ncbiGeneById(lacz), 'E. coli lacZ gene report by ID');
   await put('ncbi-orthologs-lacz', endpoints.ncbiOrthologs(lacz, []), 'NCBI orthologs of E. coli lacZ');
   await put(

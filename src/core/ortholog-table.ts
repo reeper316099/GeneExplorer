@@ -165,3 +165,27 @@ export function coverageStatement(rows: readonly OrthologRow[]): string {
     .join(', ');
   return `In this source: ${s.species} species in ${s.cladeCount} lineage group${s.cladeCount === 1 ? '' : 's'}: ${groups}. Species not listed here may still carry the gene; this source simply made no call for them.`;
 }
+
+export type CandidateSituation = { kind: 'none' | 'one' | 'many'; count: number; message: string };
+
+/** Explains how many ortholog candidates a source listed in one species; with several, the user must choose (nothing is picked for them). */
+export function describeCandidates(count: number, geneSymbol: string, species: string): CandidateSituation {
+  if (count === 0) {
+    return {
+      kind: 'none',
+      count,
+      message: `NCBI Orthologs lists no ortholog of ${geneSymbol} in ${species}. That is not the same as the species lacking the gene. You can still choose any gene to compare, but it will not be presented as an ortholog.`,
+    };
+  }
+  if (count === 1)
+    return {
+      kind: 'one',
+      count,
+      message: `NCBI lists one gene in ${species}. It is shown for you to confirm.`,
+    };
+  return {
+    kind: 'many',
+    count,
+    message: `NCBI lists ${count} genes in ${species} (a one-to-many relationship, for example after a gene duplication). Choose the one you want; none is picked for you.`,
+  };
+}

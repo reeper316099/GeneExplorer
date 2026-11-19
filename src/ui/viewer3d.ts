@@ -176,3 +176,52 @@ export class StructureViewer {
     this.spinning = false;
   }
 }
+
+export const OVERLAY_COLOR_A = '#0072B2';
+export const OVERLAY_COLOR_B = '#E69F00';
+
+/** Shows two structures in one 3D view, each in its own colour (B already moved onto A by the caller). */
+export class OverlayViewer {
+  private viewer: GLViewer | null = null;
+
+  /** Creates the viewer inside `container` (which must already be in the document and have a size). */
+  constructor(private readonly container: HTMLElement) {}
+
+  /** Loads A and the already-superimposed B; throws a readable Error if WebGL is unavailable. */
+  async load(pdbA: string, pdbBMoved: string): Promise<void> {
+    const lib = await import('3dmol');
+    this.dispose();
+    try {
+      this.viewer = lib.createViewer(this.container, { backgroundColor: 'white', antialias: true });
+    } catch (e) {
+      throw new Error(
+        `The 3D view needs WebGL, which is not available here (${e instanceof Error ? e.message : 'unknown error'}).`,
+        { cause: e },
+      );
+    }
+    this.viewer.addModel(pdbA, 'pdb');
+    this.viewer.addModel(pdbBMoved, 'pdb');
+    this.viewer.setStyle({ model: 0 }, { cartoon: { color: OVERLAY_COLOR_A } });
+    this.viewer.setStyle({ model: 1 }, { cartoon: { color: OVERLAY_COLOR_B } });
+    this.viewer.zoomTo();
+    this.viewer.render();
+  }
+
+  /** Resets rotation and zoom. */
+  reset(): void {
+    this.viewer?.zoomTo();
+    this.viewer?.render();
+  }
+
+  /** Current view as base64 PNG data (no data: prefix), or null when nothing is shown. */
+  png(): string | null {
+    const uri = this.viewer?.pngURI();
+    return uri ? uri.replace(/^data:image\/png;base64,/, '') : null;
+  }
+
+  /** Releases the WebGL context and models. */
+  dispose(): void {
+    this.viewer?.clear();
+    this.viewer = null;
+  }
+}

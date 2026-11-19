@@ -29,9 +29,8 @@ var api = {
   openExternal: (url) => import_electron.ipcRenderer.invoke(IPC.openExternal, url),
   getAppInfo: () => import_electron.ipcRenderer.invoke(IPC.getAppInfo),
   onMenuCommand: (handler) => {
-    const listener = (_event, command) => handler(command);
-    import_electron.ipcRenderer.on(IPC.menuCommand, listener);
-    return () => import_electron.ipcRenderer.removeListener(IPC.menuCommand, listener);
+    let listener = (_event, command) => handler(command);
+    return import_electron.ipcRenderer.on(IPC.menuCommand, listener), () => import_electron.ipcRenderer.removeListener(IPC.menuCommand, listener);
   }
 };
 import_electron.contextBridge.exposeInMainWorld("geneExplorer", api);

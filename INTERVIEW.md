@@ -1,0 +1,23 @@
+# Interview talking points
+
+First-person, plain language. Numbers are from real runs (see `docs/PHASE7-REPORT.md`).
+
+1. **What it is and why species coverage is the hard part.** GeneExplorer is a desktop app where you type a gene and a species and get what the gene does, where it sits in the genome, its protein, a 3D predicted structure, and its relatives in other species. Human genes are easy because every database knows them well. A bacterial gene, a plant chloroplast gene or a yeast gene breaks assumptions: NCBI may not list a UniProt entry, taxonomy names differ, and some databases have no orthologs at all. I tested E. coli lacZ and plastid rbcL on purpose, and fixed real bugs that only showed up there.
+
+2. **Identity without trusting gene symbols.** A symbol like COX1 can mean different genes in different species or be an alias of another gene. So I never treat a symbol as an identity. I link the NCBI gene and the UniProt protein only when a database cross-reference says so, and the app shows the status: confirmed, one-way, conflicting or unconfirmed. If I can't confirm, it says so instead of guessing.
+
+3. **Why orthology sources are shown separately.** Orthologs (the same gene in two species, from a common ancestor) are inferred by software, not measured, and NCBI and OrthoDB use different methods. Merging them would hide disagreement and make it look more certain than it is. So I show each source on its own, with how many species each covers, and "none in this source" never means "none exist".
+
+4. **A polite network layer.** All network calls go through one layer in the main process. It only talks to an allowlist of hosts, has a rate limit per host, shares identical in-flight requests, caches on disk with expiry, retries with exponential backoff, obeys Retry-After, and can be cancelled. It sends a generic User-Agent and no personal data.
+
+5. **Why networking lives in the main process, and how I secured the app.** The window can run untrusted-ish data (database text), so I treat it as hostile: sandbox on, context isolation on, no Node in the page, a strict Content-Security-Policy, no eval, and the page makes zero network requests. Navigation and new windows are blocked, and external links open only for allowlisted https sites. The UI builds DOM nodes and never uses innerHTML, so database text can't become markup. A script also checks that test-only code is not in the packaged app.
+
+6. **API validation with zod and handling drift.** Every response is parsed with a zod schema before use, so if a provider changes a format I get a labelled error, not a silent wrong number. Live contract tests re-check the real servers, and they caught two real mismatches: OrthoDB returns null when no group exists, and NCBI product reports differ for bacterial and organelle genes.
+
+7. **How I verified the aligner.** I wrote Needleman-Wunsch with affine gaps myself, then checked it three ways: brute force on tiny inputs, property tests (symmetry, rescoring the result), and 38 reference cases against Biopython. Scores match exactly. On a fresh run of 8 real protein pairs the score difference was 0. One honest caveat: when several alignments tie, which one is displayed is arbitrary, the score is not.
+
+8. **How superposition works and what RMSD means.** To overlay two structures I match residues from the alignment, then find the best rotation and shift with the Kabsch/Horn method (centre both point sets, build a 4x4 matrix, take its top eigenvector as a quaternion). RMSD is the average distance between matched backbone atoms afterwards. It says how similar the matched backbones are, not whether the proteins do the same job, and it depends on which residues I matched. My version agrees with Biopython to about 1e-16 angstrom, and the app refuses to overlay pairs below 30% identity.
+
+9. **What pLDDT means.** AlphaFold gives each residue a confidence score from 0 to 100, called pLDDT. Above 90 is very high; below 50 is very low and often a flexible or disordered region. I colour the structure by it and always say the structure is a prediction, not clinical evidence.
+
+10. **Tradeoffs and limitations.** Vanilla TypeScript instead of a framework keeps it small and auditable but means more manual DOM code. No API keys keeps it free and private but means polite, slower access. Ensembl was unreachable from my network, so I left it out instead of faking it. Windows and macOS builds are unsigned. NCBI lists at most one ortholog per species, so the "pick one of several" flow is tested by logic tests only. And I ran the app by hand only on macOS; Windows and Linux are checked by CI.

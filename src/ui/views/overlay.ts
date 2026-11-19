@@ -99,7 +99,7 @@ export function overlayCard(
   alignment: Alignment | null,
   scope: Scope,
 ): HTMLElement {
-  const card = h('div', { class: 'card' }, h('h3', {}, 'Structure overlay (Milestone C)'));
+  const card = h('div', { class: 'card' }, h('h3', {}, 'Structure overlay'));
   const sa = a.structure;
   const sb = b.structure;
   if (sa.status !== 'ready' || sb.status !== 'ready') {

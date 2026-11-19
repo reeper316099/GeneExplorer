@@ -186,15 +186,15 @@ export function aboutPage(ctx: AppCtx, info: AppInfo, view: GeneView | null): HT
     h(
       'span',
       {},
-      "See the provider's terms (we have not independently confirmed the licence text; check before redistributing structures). ",
+      'CC BY 4.0, for academic and commercial use, as stated in the header of each model file; "theoretical modelling only". ',
       linkOut(ctx, 'AlphaFold DB', 'https://alphafold.ebi.ac.uk/'),
     ),
   ]);
   tr([
     'OrthoDB (data.orthodb.org)',
-    'Orthologous groups (used from Milestone B)',
-    'not used yet',
-    'Pages reference CC BY 4.0',
+    'Orthologous groups and orthologs',
+    'API v12',
+    h('span', {}, 'CC BY 4.0 ', linkOut(ctx, 'OrthoDB', 'https://www.orthodb.org/')),
   ]);
   tr([
     'Ensembl (rest.ensembl.org)',

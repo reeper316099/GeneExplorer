@@ -25,6 +25,7 @@ async function launch(
   });
   const win = await app.firstWindow();
   await win.setViewportSize({ width: 1280, height: 1600 });
+  await win.waitForSelector('.topbar'); // the page has finished starting (theme applied) before a test looks at it
   return { app, win };
 }
 

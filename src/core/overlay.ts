@@ -1,4 +1,4 @@
-// Structure overlay (Milestone C): pairs residues through the sequence alignment, keeps only positions confident (pLDDT at or
+// Structure overlay: pairs residues through the sequence alignment, keeps only positions confident (pLDDT at or
 // above a threshold) in BOTH AlphaFold models, superimposes B onto A with the app's own Horn/Kabsch implementation, and reports
 // RMSD with the counts it is based on. It refuses, with a reason, when the result would not mean anything.
 import type { Alignment } from '../bio/align';

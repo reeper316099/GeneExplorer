@@ -1,0 +1,10 @@
+dist
+dist-electron
+release
+scratch
+node_modules
+coverage
+docs
+package-lock.json
+tests/fixtures
+test-results

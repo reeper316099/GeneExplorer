@@ -1,0 +1,75 @@
+body {
+  margin: 0;
+  font:
+    15px/1.5 system-ui,
+    sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+.top {
+  background: linear-gradient(90deg, #12263f, #10b981);
+  color: #fff;
+  padding: 14px 24px;
+  display: flex;
+  gap: 16px;
+  align-items: baseline;
+}
+.top h1 {
+  margin: 0;
+  font-size: 20px;
+}
+.sub {
+  opacity: 0.85;
+}
+main {
+  padding: 24px;
+  max-width: 900px;
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+button {
+  font: inherit;
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+}
+button:focus-visible {
+  outline: 3px solid var(--secondary);
+  outline-offset: 2px;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+td,
+th {
+  text-align: left;
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--border);
+  font-variant-numeric: tabular-nums;
+}
+.status {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 4px 24px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 13px;
+}
+.ok {
+  color: #0a7a55;
+}
+.bad {
+  color: #b42318;
+}

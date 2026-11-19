@@ -1,0 +1,13 @@
+{
+  // Electron main + preload + build/tool scripts: Node APIs, no DOM.
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "lib": ["ES2023"], "types": ["node"] },
+  "include": [
+    "electron/**/*.ts",
+    "tools/**/*.ts",
+    "src/shared/**/*.ts",
+    "vite.config.ts",
+    "vitest.config.ts",
+    "playwright.config.ts"
+  ]
+}

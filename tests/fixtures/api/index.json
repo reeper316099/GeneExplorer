@@ -1,0 +1,259 @@
+{
+  "tool": "tools/record-fixtures.ts",
+  "note": "Real API responses recorded from the live services; not edited by hand.",
+  "entries": [
+    {
+      "name": "uniprot-lacz-search",
+      "method": "GET",
+      "url": "https://rest.uniprot.org/uniprotkb/search?query=gene_exact%3AlacZ%20AND%20organism_id%3A83333&fields=accession&size=1",
+      "status": 200,
+      "file": "uniprot-lacz-search.json",
+      "bytes": 137,
+      "recordedAt": "2026-11-19T03:33:50.128Z",
+      "note": "E. coli lacZ, UniProt search",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "uniprot-taxonomy-zebrafish",
+      "method": "GET",
+      "url": "https://rest.uniprot.org/taxonomy/search?query=zebrafish&size=3",
+      "status": 200,
+      "file": "uniprot-taxonomy-zebrafish.json",
+      "bytes": 2936,
+      "recordedAt": "2026-11-19T03:33:50.873Z",
+      "note": "Taxonomy search",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "ncbi-taxon-suggest-zebrafish",
+      "method": "GET",
+      "url": "https://api.ncbi.nlm.nih.gov/datasets/v2/taxonomy/taxon_suggest/zebrafish",
+      "status": 200,
+      "file": "ncbi-taxon-suggest-zebrafish.json",
+      "bytes": 301,
+      "recordedAt": "2026-11-19T03:33:51.451Z",
+      "note": "NCBI taxonomy autocomplete",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "ncbi-gene-ecoli-lacz",
+      "method": "GET",
+      "url": "https://api.ncbi.nlm.nih.gov/datasets/v2/gene/symbol/lacZ/taxon/511145",
+      "status": 200,
+      "file": "ncbi-gene-ecoli-lacz.json",
+      "bytes": 3292,
+      "recordedAt": "2026-11-19T03:33:51.759Z",
+      "note": "E. coli K-12 lacZ gene report",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "ncbi-gene-arabidopsis-rbcl",
+      "method": "GET",
+      "url": "https://api.ncbi.nlm.nih.gov/datasets/v2/gene/symbol/rbcL/taxon/3702",
+      "status": 200,
+      "file": "ncbi-gene-arabidopsis-rbcl.json",
+      "bytes": 756,
+      "recordedAt": "2026-11-19T03:33:52.044Z",
+      "note": "Plastid-encoded gene report",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "ncbi-gene-ecoli-strain-warning",
+      "method": "GET",
+      "url": "https://api.ncbi.nlm.nih.gov/datasets/v2/gene/symbol/lacZ/taxon/83333",
+      "status": 200,
+      "file": "ncbi-gene-ecoli-strain-warning.json",
+      "bytes": 301,
+      "recordedAt": "2026-11-19T03:33:52.321Z",
+      "note": "Strain-level taxon: warning, no reports",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "alphafold-lacz",
+      "method": "GET",
+      "url": "https://alphafold.ebi.ac.uk/api/prediction/P00722",
+      "status": 200,
+      "file": "alphafold-lacz.json",
+      "bytes": 3518,
+      "recordedAt": "2026-11-19T03:33:52.648Z",
+      "note": "AlphaFold prediction list for lacZ",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "orthodb-group-bacterial",
+      "method": "GET",
+      "url": "https://data.orthodb.org/v12/group?id=9758603at2",
+      "status": 200,
+      "file": "orthodb-group-bacterial.json",
+      "bytes": 2190,
+      "recordedAt": "2026-11-19T03:33:53.482Z",
+      "note": "OrthoDB bacterial group containing lacZ",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "uniprot-tp53-entry",
+      "method": "GET",
+      "url": "https://rest.uniprot.org/uniprotkb/P04637.json?fields=accession,id,gene_names,gene_primary,protein_name,organism_name,organism_id,reviewed,annotation_score,length,sequence,cc_function,ft_domain,ft_region,go,xref_geneid,xref_refseq,xref_ensembl,xref_orthodb,xref_pdb,xref_alphafolddb,cc_subcellular_location,protein_existence,cc_alternative_products,lineage,sequence_version,version,date_modified",
+      "status": 200,
+      "file": "uniprot-tp53-entry.json",
+      "bytes": 106389,
+      "recordedAt": "2026-11-19T03:33:53.687Z",
+      "note": "Human TP53 entry (trimmed fields)",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "uniprot-tp53-search",
+      "method": "GET",
+      "url": "https://rest.uniprot.org/uniprotkb/search?query=gene_exact%3ATP53%20AND%20organism_id%3A9606&fields=accession,id,gene_primary,reviewed,organism_id&size=5",
+      "status": 200,
+      "file": "uniprot-tp53-search.json",
+      "bytes": 1451,
+      "recordedAt": "2026-11-19T03:33:53.851Z",
+      "note": "UniProt symbol search: reviewed and unreviewed hits",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "ncbi-gene-human-tp53",
+      "method": "GET",
+      "url": "https://api.ncbi.nlm.nih.gov/datasets/v2/gene/id/7157",
+      "status": 200,
+      "file": "ncbi-gene-human-tp53.json",
+      "bytes": 39364,
+      "recordedAt": "2026-11-19T03:33:54.075Z",
+      "note": "Human TP53 gene report",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "ncbi-orthologs-tp53",
+      "method": "GET",
+      "url": "https://api.ncbi.nlm.nih.gov/datasets/v2/gene/id/7157/orthologs?taxon_filter=7955&taxon_filter=10090",
+      "status": 200,
+      "file": "ncbi-orthologs-tp53.json",
+      "bytes": 72896,
+      "recordedAt": "2026-11-19T03:33:54.466Z",
+      "note": "NCBI orthologs of TP53 in mouse and zebrafish",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "ncbi-taxon-human",
+      "method": "GET",
+      "url": "https://api.ncbi.nlm.nih.gov/datasets/v2/taxonomy/taxon/9606",
+      "status": 200,
+      "file": "ncbi-taxon-human.json",
+      "bytes": 959,
+      "recordedAt": "2026-11-19T03:33:54.863Z",
+      "note": "NCBI taxonomy node for human",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "alphafold-tp53",
+      "method": "GET",
+      "url": "https://alphafold.ebi.ac.uk/api/prediction/P04637",
+      "status": 200,
+      "file": "alphafold-tp53.json",
+      "bytes": 18911,
+      "recordedAt": "2026-11-19T03:33:54.990Z",
+      "note": "AlphaFold prediction list for TP53",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "alphafold-insulin",
+      "method": "GET",
+      "url": "https://alphafold.ebi.ac.uk/api/prediction/P01308",
+      "status": 200,
+      "file": "alphafold-insulin.json",
+      "bytes": 1907,
+      "recordedAt": "2026-11-19T03:33:55.084Z",
+      "note": "AlphaFold prediction list for insulin (small)",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "alphafold-insulin-model",
+      "method": "GET",
+      "url": "https://alphafold.ebi.ac.uk/files/AF-P01308-F1-model_v6.pdb",
+      "status": 200,
+      "file": "alphafold-insulin-model.pdb",
+      "bytes": 72575,
+      "recordedAt": "2026-11-19T03:33:55.386Z",
+      "note": "AlphaFold PDB model for insulin (pLDDT in B-factor)",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "orthodb-search-tp53",
+      "method": "GET",
+      "url": "https://data.orthodb.org/v12/search?query=P04637&level=7742&species=9606&limit=3",
+      "status": 200,
+      "file": "orthodb-search-tp53.json",
+      "bytes": 269,
+      "recordedAt": "2026-11-19T03:33:55.569Z",
+      "note": "OrthoDB search by UniProt accession",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "orthodb-orthologs-tp53",
+      "method": "GET",
+      "url": "https://data.orthodb.org/v12/orthologs?id=742841at7742&species=9606,10090,7955",
+      "status": 200,
+      "file": "orthodb-orthologs-tp53.json",
+      "bytes": 10234,
+      "recordedAt": "2026-11-19T03:33:55.899Z",
+      "note": "OrthoDB orthologs of TP53 group, species-filtered",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "ncbi-gene-symbol-tp53",
+      "method": "GET",
+      "url": "https://api.ncbi.nlm.nih.gov/datasets/v2/gene/symbol/TP53/taxon/9606",
+      "status": 200,
+      "file": "ncbi-gene-symbol-tp53.json",
+      "bytes": 39364,
+      "recordedAt": "2026-11-19T03:43:32.429Z",
+      "note": "NCBI symbol lookup, exact match",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "ncbi-gene-symbol-cox1-alias",
+      "method": "GET",
+      "url": "https://api.ncbi.nlm.nih.gov/datasets/v2/gene/symbol/COX1/taxon/9606",
+      "status": 200,
+      "file": "ncbi-gene-symbol-cox1-alias.json",
+      "bytes": 5814,
+      "recordedAt": "2026-11-19T03:43:32.682Z",
+      "note": "NCBI symbol lookup that only matches via an alias (COX1 -> PTGS1)",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "uniprot-search-tp53-human",
+      "method": "GET",
+      "url": "https://rest.uniprot.org/uniprotkb/search?query=gene_exact%3ATP53%20AND%20organism_id%3A9606&fields=accession,id,gene_primary,reviewed,organism_id&size=10",
+      "status": 200,
+      "file": "uniprot-search-tp53-human.json",
+      "bytes": 2984,
+      "recordedAt": "2026-11-19T03:43:33.403Z",
+      "note": "UniProt symbol search exactly as the app builds it",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "uniprot-obsolete-deleted",
+      "method": "GET",
+      "url": "https://rest.uniprot.org/uniprotkb/Z9Z9Z9.json?fields=accession,id,gene_names,gene_primary,protein_name,organism_name,organism_id,reviewed,annotation_score,length,sequence,cc_function,ft_domain,ft_region,go,xref_geneid,xref_refseq,xref_ensembl,xref_orthodb,xref_pdb,xref_alphafolddb,cc_subcellular_location,protein_existence,cc_alternative_products,lineage,sequence_version,version,date_modified",
+      "status": 200,
+      "file": "uniprot-obsolete-deleted.json",
+      "bytes": 252,
+      "recordedAt": "2026-11-19T03:44:09.105Z",
+      "note": "Deleted accession: HTTP 200 with entryType Inactive",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "uniprot-obsolete-demerged",
+      "method": "GET",
+      "url": "https://rest.uniprot.org/uniprotkb/P0CG05.json?fields=accession,id,gene_names,gene_primary,protein_name,organism_name,organism_id,reviewed,annotation_score,length,sequence,cc_function,ft_domain,ft_region,go,xref_geneid,xref_refseq,xref_ensembl,xref_orthodb,xref_pdb,xref_alphafolddb,cc_subcellular_location,protein_existence,cc_alternative_products,lineage,sequence_version,version,date_modified",
+      "status": 200,
+      "file": "uniprot-obsolete-demerged.json",
+      "bytes": 237,
+      "recordedAt": "2026-11-19T03:44:09.339Z",
+      "note": "Demerged accession (-> P0DOY2, P0DOY3)",
+      "label": "REAL recorded response"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+/* Design tokens. Full set (pLDDT scale, lineage palette) arrives with the Milestone A UI. */
+:root {
+  --bg: #f6f8fb;
+  --surface: #ffffff;
+  --text: #14202e;
+  --text-muted: #4a5a6c;
+  --border: #d5dde7;
+  --primary: #12263f;
+  --accent: #1e5aa8;
+  --secondary: #10b981;
+  --radius: 14px;
+}

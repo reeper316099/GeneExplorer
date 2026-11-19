@@ -1,0 +1,7 @@
+{
+  // Renderer: browser DOM APIs only. No Node types, so Node code cannot sneak in.
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "lib": ["ES2023", "DOM", "DOM.Iterable"], "types": [] },
+  "include": ["src/**/*.ts", "src/**/*.d.ts"],
+  "exclude": ["src/workers/**"]
+}

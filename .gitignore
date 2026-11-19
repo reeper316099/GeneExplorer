@@ -1,0 +1,6 @@
+node_modules/
+scratch/
+dist/
+out/
+test-results
+playwright-report

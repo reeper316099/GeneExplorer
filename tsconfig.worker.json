@@ -1,0 +1,6 @@
+{
+  // Web Workers: WebWorker lib, no DOM.
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "lib": ["ES2023", "WebWorker"], "types": [] },
+  "include": ["src/workers/**/*.ts", "src/shared/**/*.ts", "src/bio/**/*.ts"]
+}

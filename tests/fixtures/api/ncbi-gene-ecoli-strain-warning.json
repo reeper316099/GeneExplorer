@@ -1,0 +1,1 @@
+{"messages":[{"warning":{"gene_warning_code":"ABOVE_SPECIES_TAXON", "reason":"The provided taxonomy token belongs to a virus or a taxonomy level above species", "message":"The provided taxonomy token, 83333, belongs to a virus or a taxonomy level above species.", "unrecognized_identifier":"83333"}}]}

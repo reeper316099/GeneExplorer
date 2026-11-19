@@ -1,0 +1,12 @@
+# Phase 2 placeholder config so `npm run dist` has the right inputs; targets, icons and publishing are finished in Phase 8.
+appId: com.reeper316099.geneexplorer
+productName: GeneExplorer
+copyright: Copyright (c) 2026 reeper316099
+directories:
+  output: release
+files:
+  - dist/**
+  - dist-electron/**
+  - package.json
+  - '!**/*.map'
+asar: true

@@ -1,0 +1,55 @@
+# Runs on every pull request and every push to main. Uses recorded fixtures only: no live network calls.
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run format:check
+      - run: npm run typecheck
+      - name: Unit and property tests
+        run: npm test
+      - name: Contract tests (fixtures only, offline)
+        run: npx vitest run tests/contract
+      - name: Allow Chromium's sandbox on the runner
+        # Ubuntu 24.04 restricts unprivileged user namespaces, which Electron's sandbox needs. Runner-only change.
+        run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+      - name: Electron end-to-end tests (virtual display, fixtures only)
+        run: xvfb-run -a npm run test:e2e
+      - name: Upload e2e failure details
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-results
+          path: test-results
+          if-no-files-found: ignore
+  package-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build an unpacked Linux app
+        run: npm run pack -- --linux
+      - name: Confirm no test-mode code or fixtures are packaged
+        run: npm run verify:package -- release/linux-unpacked/resources/app.asar

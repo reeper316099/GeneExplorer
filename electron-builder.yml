@@ -1,12 +1,43 @@
-# Phase 2 placeholder config so `npm run dist` has the right inputs; targets, icons and publishing are finished in Phase 8.
+# Packaging config. Builds are UNSIGNED on Windows and macOS (see README "Honest limits").
 appId: com.reeper316099.geneexplorer
 productName: GeneExplorer
 copyright: Copyright (c) 2026 reeper316099
 directories:
   output: release
+  buildResources: build
 files:
   - dist/**
   - dist-electron/**
   - package.json
   - '!**/*.map'
 asar: true
+# Test-mode code is compiled out of dist-electron by scripts/build.mjs (production build); `npm run verify:package`
+# greps the packaged app to prove it.
+artifactName: ${productName}-${version}-${os}-${arch}.${ext}
+publish:
+  provider: github
+  owner: reeper316099
+  repo: GeneExplorer
+  releaseType: release
+win:
+  icon: icon.png
+  target:
+    - { target: nsis, arch: [x64] }
+    - { target: portable, arch: [x64] }
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+mac:
+  icon: icon.png
+  category: public.app-category.education
+  # Unsigned and not notarized: identity null stops electron-builder from searching for a certificate.
+  identity: null
+  target:
+    - { target: dmg, arch: [arm64, x64] }
+linux:
+  icon: icon.png
+  category: Education
+  maintainer: reeper316099 <noreply@users.noreply.github.com>
+  target:
+    - { target: AppImage, arch: [x64] }
+    - { target: deb, arch: [x64] }

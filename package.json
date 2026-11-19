@@ -24,9 +24,13 @@
     "format": "prettier --write .",
     "fixtures:record": "node scripts/run-tool.mjs tools/record-fixtures.ts",
     "smoke:live": "node scripts/run-tool.mjs tools/live-smoke.ts",
-    "ref:generate": "python3 tools/gen_align_refs.py && python3 tools/gen_superpose_refs.py"
+    "ref:generate": "python3 tools/gen_align_refs.py && python3 tools/gen_superpose_refs.py",
+    "format:check": "prettier --check .",
+    "pack": "npm run build && electron-builder --dir --publish never",
+    "verify:package": "node scripts/verify-package.mjs"
   },
   "devDependencies": {
+    "3dmol": "2.5.5",
     "@eslint/js": "10.0.1",
     "@playwright/test": "1.65.1",
     "@types/node": "22.20.5",
@@ -40,10 +44,7 @@
     "typescript": "6.0.3",
     "typescript-eslint": "8.73.0",
     "vite": "8.3.8",
-    "vitest": "5.1.1"
-  },
-  "dependencies": {
-    "3dmol": "2.5.5",
+    "vitest": "5.1.1",
     "zod": "4.6.7"
   }
 }

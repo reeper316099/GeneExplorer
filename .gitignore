@@ -4,3 +4,7 @@ dist/
 out/
 test-results
 playwright-report
+
+dist-electron/
+release/
+coverage/

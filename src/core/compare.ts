@@ -173,6 +173,11 @@ export function buildComparison(a: CompareSide, b: CompareSide, options: Compare
 /** Text for the standing AlphaFold caveat, with the model's own confidence band. */
 export function structureNote(meanPlddt: number): string {
   const band = plddtBand(meanPlddt);
-  const label = { very_high: 'very high', confident: 'confident', low: 'low', very_low: 'very low' }[band];
-  return `Computed prediction (AlphaFold), mean pLDDT ${meanPlddt.toFixed(1)} (${label} confidence). Not an experimental structure and not for clinical use.`;
+  const label = {
+    very_high: 'very high confidence',
+    confident: 'confident',
+    low: 'low confidence',
+    very_low: 'very low confidence',
+  }[band];
+  return `Computed prediction (AlphaFold), mean pLDDT ${meanPlddt.toFixed(1)} (${label}). Not an experimental structure and not for clinical use.`;
 }

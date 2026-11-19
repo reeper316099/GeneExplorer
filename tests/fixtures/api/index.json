@@ -91,17 +91,6 @@
       "label": "REAL recorded response"
     },
     {
-      "name": "uniprot-tp53-entry",
-      "method": "GET",
-      "url": "https://rest.uniprot.org/uniprotkb/P04637.json?fields=accession,id,gene_names,gene_primary,protein_name,organism_name,organism_id,reviewed,annotation_score,length,sequence,cc_function,ft_domain,ft_region,go,xref_geneid,xref_refseq,xref_ensembl,xref_orthodb,xref_pdb,xref_alphafolddb,cc_subcellular_location,protein_existence,cc_alternative_products,lineage,sequence_version,version,date_modified",
-      "status": 200,
-      "file": "uniprot-tp53-entry.json",
-      "bytes": 106389,
-      "recordedAt": "2026-11-19T03:33:53.687Z",
-      "note": "Human TP53 entry (trimmed fields)",
-      "label": "REAL recorded response"
-    },
-    {
       "name": "uniprot-tp53-search",
       "method": "GET",
       "url": "https://rest.uniprot.org/uniprotkb/search?query=gene_exact%3ATP53%20AND%20organism_id%3A9606&fields=accession,id,gene_primary,reviewed,organism_id&size=5",
@@ -236,23 +225,122 @@
     {
       "name": "uniprot-obsolete-deleted",
       "method": "GET",
-      "url": "https://rest.uniprot.org/uniprotkb/Z9Z9Z9.json?fields=accession,id,gene_names,gene_primary,protein_name,organism_name,organism_id,reviewed,annotation_score,length,sequence,cc_function,ft_domain,ft_region,go,xref_geneid,xref_refseq,xref_ensembl,xref_orthodb,xref_pdb,xref_alphafolddb,cc_subcellular_location,protein_existence,cc_alternative_products,lineage,sequence_version,version,date_modified",
+      "url": "https://rest.uniprot.org/uniprotkb/Z9Z9Z9.json?fields=accession,id,gene_names,gene_primary,protein_name,organism_name,organism_id,reviewed,annotation_score,length,sequence,cc_function,ft_domain,ft_region,go,xref_geneid,xref_refseq,xref_ensembl,xref_orthodb,xref_pdb,xref_alphafolddb,cc_subcellular_location,protein_existence,ft_repeat,ft_transmem,ft_signal,ft_zn_fing,ft_motif,ft_coiled,ft_topo_dom,ft_propep,ft_transit,ft_dna_bind,cc_alternative_products,lineage,sequence_version,version,date_modified",
       "status": 200,
       "file": "uniprot-obsolete-deleted.json",
       "bytes": 252,
-      "recordedAt": "2026-11-19T03:44:09.105Z",
+      "recordedAt": "2026-11-19T03:51:20.051Z",
       "note": "Deleted accession: HTTP 200 with entryType Inactive",
       "label": "REAL recorded response"
     },
     {
       "name": "uniprot-obsolete-demerged",
       "method": "GET",
-      "url": "https://rest.uniprot.org/uniprotkb/P0CG05.json?fields=accession,id,gene_names,gene_primary,protein_name,organism_name,organism_id,reviewed,annotation_score,length,sequence,cc_function,ft_domain,ft_region,go,xref_geneid,xref_refseq,xref_ensembl,xref_orthodb,xref_pdb,xref_alphafolddb,cc_subcellular_location,protein_existence,cc_alternative_products,lineage,sequence_version,version,date_modified",
+      "url": "https://rest.uniprot.org/uniprotkb/P0CG05.json?fields=accession,id,gene_names,gene_primary,protein_name,organism_name,organism_id,reviewed,annotation_score,length,sequence,cc_function,ft_domain,ft_region,go,xref_geneid,xref_refseq,xref_ensembl,xref_orthodb,xref_pdb,xref_alphafolddb,cc_subcellular_location,protein_existence,ft_repeat,ft_transmem,ft_signal,ft_zn_fing,ft_motif,ft_coiled,ft_topo_dom,ft_propep,ft_transit,ft_dna_bind,cc_alternative_products,lineage,sequence_version,version,date_modified",
       "status": 200,
       "file": "uniprot-obsolete-demerged.json",
       "bytes": 237,
-      "recordedAt": "2026-11-19T03:44:09.339Z",
+      "recordedAt": "2026-11-19T03:51:20.281Z",
       "note": "Demerged accession (-> P0DOY2, P0DOY3)",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "uniprot-tp53-entry",
+      "method": "GET",
+      "url": "https://rest.uniprot.org/uniprotkb/P04637.json?fields=accession,id,gene_names,gene_primary,protein_name,organism_name,organism_id,reviewed,annotation_score,length,sequence,cc_function,ft_domain,ft_region,go,xref_geneid,xref_refseq,xref_ensembl,xref_orthodb,xref_pdb,xref_alphafolddb,cc_subcellular_location,protein_existence,ft_repeat,ft_transmem,ft_signal,ft_zn_fing,ft_motif,ft_coiled,ft_topo_dom,ft_propep,ft_transit,ft_dna_bind,cc_alternative_products,lineage,sequence_version,version,date_modified",
+      "status": 200,
+      "file": "uniprot-tp53-entry.json",
+      "bytes": 107447,
+      "recordedAt": "2026-11-19T03:51:20.857Z",
+      "note": "Human TP53 entry (trimmed fields)",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "ncbi-product-tp53",
+      "method": "GET",
+      "url": "https://api.ncbi.nlm.nih.gov/datasets/v2/gene/id/7157/product_report",
+      "status": 200,
+      "file": "ncbi-product-tp53.json",
+      "bytes": 61238,
+      "recordedAt": "2026-11-19T03:51:21.388Z",
+      "note": "TP53 transcripts and exons",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "ncbi-seqreport-human-chr17",
+      "method": "GET",
+      "url": "https://api.ncbi.nlm.nih.gov/datasets/v2/genome/accession/GCF_000001405.40/sequence_reports?chromosomes=17",
+      "status": 200,
+      "file": "ncbi-seqreport-human-chr17.json",
+      "bytes": 12857,
+      "recordedAt": "2026-11-19T03:51:21.593Z",
+      "note": "Chromosome 17 length",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "alphafold-tp53-model",
+      "method": "GET",
+      "url": "https://alphafold.ebi.ac.uk/files/AF-P04637-F1-model_v6.pdb",
+      "status": 200,
+      "file": "alphafold-tp53-model.pdb",
+      "bytes": 254339,
+      "recordedAt": "2026-11-19T04:04:39.732Z",
+      "note": "AlphaFold PDB model for TP53 (pLDDT in B-factor)",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "ncbi-product-lacz",
+      "method": "GET",
+      "url": "https://api.ncbi.nlm.nih.gov/datasets/v2/gene/id/945006/product_report",
+      "status": 200,
+      "file": "ncbi-product-lacz.json",
+      "bytes": 585,
+      "recordedAt": "2026-11-19T04:07:59.068Z",
+      "note": "Bacterial gene: protein-only product report",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "ncbi-seqreport-ecoli",
+      "method": "GET",
+      "url": "https://api.ncbi.nlm.nih.gov/datasets/v2/genome/accession/GCF_000005845.2/sequence_reports",
+      "status": 200,
+      "file": "ncbi-seqreport-ecoli.json",
+      "bytes": 360,
+      "recordedAt": "2026-11-19T04:07:59.322Z",
+      "note": "E. coli K-12 sequence report (no chromosome filter)",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "uniprot-geneid-lacz",
+      "method": "GET",
+      "url": "https://rest.uniprot.org/uniprotkb/search?query=xref%3Ageneid-945006&fields=accession,id,gene_primary,protein_name,organism_name,reviewed,organism_id,length&size=10",
+      "status": 200,
+      "file": "uniprot-geneid-lacz.json",
+      "bytes": 2065,
+      "recordedAt": "2026-11-19T04:07:59.989Z",
+      "note": "UniProt entries cross-referencing GeneID 945006 (lacZ)",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "uniprot-entry-lacz",
+      "method": "GET",
+      "url": "https://rest.uniprot.org/uniprotkb/P00722.json?fields=accession,id,gene_names,gene_primary,protein_name,organism_name,organism_id,reviewed,annotation_score,length,sequence,cc_function,ft_domain,ft_region,go,xref_geneid,xref_refseq,xref_ensembl,xref_orthodb,xref_pdb,xref_alphafolddb,cc_subcellular_location,protein_existence,ft_repeat,ft_transmem,ft_signal,ft_zn_fing,ft_motif,ft_coiled,ft_topo_dom,ft_propep,ft_transit,ft_dna_bind,cc_alternative_products,lineage,sequence_version,version,date_modified",
+      "status": 200,
+      "file": "uniprot-entry-lacz.json",
+      "bytes": 18531,
+      "recordedAt": "2026-11-19T04:08:00.182Z",
+      "note": "E. coli lacZ UniProt entry",
+      "label": "REAL recorded response"
+    },
+    {
+      "name": "ncbi-taxon-ecoli",
+      "method": "GET",
+      "url": "https://api.ncbi.nlm.nih.gov/datasets/v2/taxonomy/taxon/511145",
+      "status": 200,
+      "file": "ncbi-taxon-ecoli.json",
+      "bytes": 577,
+      "recordedAt": "2026-11-19T04:08:10.810Z",
+      "note": "E. coli K-12 substr. MG1655 taxonomy node",
       "label": "REAL recorded response"
     }
   ]

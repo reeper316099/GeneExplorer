@@ -27,16 +27,30 @@ export type Resolution =
 
 type R<T> = IpcResult<T>;
 
-/** Loads the UniProt protein for a gene (first reviewed accession NCBI lists), if there is one. */
+/** Loads the UniProt protein for a gene: the reviewed entry NCBI lists, else one found through UniProt's own GeneID cross-reference. */
 async function proteinForGene(
   api: GeneApi,
   gene: GeneRecord,
   notes: string[],
 ): Promise<R<ProteinRecord | null>> {
-  const acc = gene.value.swissProtAccessions[0];
+  let acc = gene.value.swissProtAccessions[0];
   if (!acc) {
-    notes.push('NCBI lists no reviewed UniProt entry for this gene.');
-    return { ok: true, value: null };
+    // NCBI lists UniProt entries only for some species (mostly vertebrates); ask UniProt which entries point at this GeneID.
+    const found = await api.searchUniProtGeneId(gene.value.geneId);
+    if (!found.ok) {
+      notes.push(`The protein for this gene could not be looked up in UniProt: ${found.error.message}`);
+      return { ok: true, value: null };
+    }
+    const list = found.value.value;
+    const chosen = list.find((h) => h.reviewed) ?? list[0];
+    if (!chosen) {
+      notes.push('Neither NCBI nor UniProt links a protein entry to this gene.');
+      return { ok: true, value: null };
+    }
+    acc = chosen.accession;
+    notes.push(
+      `NCBI names no UniProt entry for this gene, so the protein was found through UniProt's own cross-reference to GeneID ${gene.value.geneId}. ${list.length} UniProt entr${list.length === 1 ? 'y' : 'ies'} cross-reference it; showing ${chosen.reviewed ? 'the reviewed one' : 'the first one, which is unreviewed'} (${acc}).`,
+    );
   }
   const p = await api.getUniProt(acc);
   if (!p.ok) return p;

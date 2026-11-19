@@ -10,6 +10,8 @@ import {
   parseAlphaFold,
   parseNcbiGenes,
   parseNcbiOrthologs,
+  parseNcbiProducts,
+  parseNcbiSequenceReport,
   parseNcbiTaxon,
   parseNcbiTaxonSuggest,
   parseOrthoDbGroup,
@@ -19,8 +21,9 @@ import {
   parseUniProtSearch,
   parseUniProtTaxonomy,
 } from '../../src/api/parse';
-import { parseOrthoDbGroupId, parseUniProtAccession } from '../../src/shared/ids';
+import { parseNcbiGeneId, parseOrthoDbGroupId, parseUniProtAccession } from '../../src/shared/ids';
 import type { FetchMeta, IpcResult } from '../../src/shared/types';
+import { need } from '../helpers/fixtures';
 
 interface Entry {
   name: string;
@@ -57,6 +60,13 @@ const PARSERS: Record<string, (raw: unknown, m: FetchMeta) => IpcResult<unknown>
   'ncbi-gene-symbol-tp53': parseNcbiGenes,
   'ncbi-gene-symbol-cox1-alias': parseNcbiGenes,
   'ncbi-orthologs-tp53': parseNcbiOrthologs,
+  'ncbi-product-tp53': (raw, m) => parseNcbiProducts(raw, need(parseNcbiGeneId('7157')), m),
+  'ncbi-product-lacz': (raw, m) => parseNcbiProducts(raw, need(parseNcbiGeneId('945006')), m),
+  'ncbi-seqreport-human-chr17': (raw) => parseNcbiSequenceReport(raw, 'NC_000017.11'),
+  'ncbi-seqreport-ecoli': (raw) => parseNcbiSequenceReport(raw, 'NC_000913.3'),
+  'ncbi-taxon-ecoli': (raw) => parseNcbiTaxon(raw),
+  'uniprot-geneid-lacz': parseUniProtSearch,
+  'uniprot-entry-lacz': parseUniProtEntry,
   'alphafold-lacz': (raw, m) => parseAlphaFold(raw, lacz, m),
   'alphafold-tp53': (raw, m) => parseAlphaFold(raw, p53, m),
   'alphafold-insulin': (raw, m) => parseAlphaFold(raw, parseUniProtAccession('P01308') ?? p53, m),

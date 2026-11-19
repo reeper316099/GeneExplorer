@@ -11,9 +11,12 @@ import type {
   OrthologCall,
   ProteinFeature,
   ProteinRecord,
+  SequenceInfo,
   StructureRecord,
   TaxonCandidate,
   TaxonInfo,
+  Transcript,
+  TranscriptSet,
 } from '../shared/domain';
 import {
   parseEnsemblGeneId,
@@ -28,6 +31,8 @@ import type { FetchMeta, IpcResult, Sourced } from '../shared/types';
 import {
   AlphaFoldListSchema,
   NcbiGeneReportsSchema,
+  NcbiProductReportSchema,
+  NcbiSequenceReportsSchema,
   NcbiTaxonNodeSchema,
   NcbiTaxonSuggestSchema,
   OrthoDbGroupSchema,
@@ -158,6 +163,9 @@ export function parseUniProtEntry(raw: unknown, meta: FetchMeta): IpcResult<UniP
     }
   }
 
+  const subcellularLocations = (e.comments ?? [])
+    .filter((c) => c.commentType === 'SUBCELLULAR LOCATION')
+    .flatMap((c) => (c.subcellularLocations ?? []).flatMap((l) => (l.location ? [l.location.value] : [])));
   const fn = (e.comments ?? []).find((c) => c.commentType === 'FUNCTION')?.texts?.[0]?.value;
   const record = sourced(
     {
@@ -180,6 +188,7 @@ export function parseUniProtEntry(raw: unknown, meta: FetchMeta): IpcResult<UniP
       entryVersion: e.entryAudit.entryVersion,
       lastAnnotationUpdate: e.entryAudit.lastAnnotationUpdateDate,
       ...(fn ? { functionText: fn } : {}),
+      subcellularLocations: [...new Set(subcellularLocations)],
       features,
       isoforms,
       xrefs,
@@ -199,6 +208,10 @@ export interface UniProtSearchHit {
   entryName?: string;
   taxonId?: TaxonId;
   primaryGeneName?: string;
+  proteinName?: string;
+  organismName?: string;
+  commonName?: string;
+  length?: number;
 }
 
 /** Parses a UniProt search result list (reviewed entries first, as UniProt orders them). */
@@ -211,12 +224,19 @@ export function parseUniProtSearch(raw: unknown, meta: FetchMeta): IpcResult<Sou
     if (!acc) continue;
     const taxonId = r.organism ? parseTaxonId(r.organism.taxonId) : null;
     const gene = r.genes?.[0]?.geneName?.value;
+    const pname =
+      r.proteinDescription?.recommendedName?.fullName.value ??
+      r.proteinDescription?.submissionNames?.[0]?.fullName.value;
     hits.push({
       accession: acc,
       reviewed: r.entryType.startsWith('UniProtKB reviewed'),
       ...(r.uniProtkbId ? { entryName: r.uniProtkbId } : {}),
       ...(taxonId ? { taxonId } : {}),
       ...(gene ? { primaryGeneName: gene } : {}),
+      ...(pname ? { proteinName: pname } : {}),
+      ...(r.organism?.scientificName ? { organismName: r.organism.scientificName } : {}),
+      ...(r.organism?.commonName ? { commonName: r.organism.commonName } : {}),
+      ...(r.sequence ? { length: r.sequence.length } : {}),
     });
   }
   return { ok: true, value: sourced(hits, 'UniProt', 'search', meta) };
@@ -312,6 +332,12 @@ function toGeneRecord(
       chromosomes: g.chromosomes ?? [],
       locations,
       synonyms: g.synonyms ?? [],
+      alternateNames: g.alternate_names ?? [],
+      mapLocations: (g.map_locations ?? []).map((m) => ({ type: m.map_type, value: m.map_value })),
+      ...(g.annotations?.[0]?.annotation_name ? { annotationName: g.annotations[0].annotation_name } : {}),
+      ...(g.annotations?.[0]?.annotation_release_date
+        ? { annotationDate: g.annotations[0].annotation_release_date }
+        : {}),
       ...(g.nomenclature_authority
         ? {
             nomenclature: {
@@ -420,44 +446,61 @@ export function parseNcbiTaxonSuggest(raw: unknown, meta: FetchMeta): IpcResult<
 
 // ---------------------------------------------------------------- AlphaFold
 
-/** Picks the AlphaFold model for an accession from the prediction list. Returns null when none matches. */
+/** Lists every AlphaFold model (fragment) for an accession; very large proteins are split into several fragments. */
+export function parseAlphaFoldModels(
+  raw: unknown,
+  accession: UniProtAccession,
+  meta: FetchMeta,
+): IpcResult<StructureRecord[]> {
+  const v = validate(AlphaFoldListSchema, raw, 'AlphaFold');
+  if (!v.ok) return v;
+  const out: StructureRecord[] = [];
+  for (const p of v.value.filter((x) => x.uniprotAccession === accession)) {
+    const acc = parseUniProtAccession(p.uniprotAccession);
+    if (!acc) return bad('AlphaFold returned an accession in an unknown format.');
+    out.push(
+      sourced(
+        {
+          entryId: p.entryId,
+          uniprotAccession: acc,
+          modelVersion: p.latestVersion,
+          createdDate: p.modelCreatedDate,
+          meanPlddt: p.globalMetricValue,
+          fractions: {
+            veryLow: p.fractionPlddtVeryLow,
+            low: p.fractionPlddtLow,
+            confident: p.fractionPlddtConfident,
+            veryHigh: p.fractionPlddtVeryHigh,
+          },
+          sequence: p.sequence,
+          pdbUrl: p.pdbUrl,
+          cifUrl: p.cifUrl,
+          ...(p.paeImageUrl ? { paeImageUrl: p.paeImageUrl } : {}),
+          ...(p.uniprotStart !== undefined &&
+          p.uniprotEnd !== undefined &&
+          p.entryId.match(/-F[0-9]+$/) &&
+          !p.entryId.endsWith('-F1')
+            ? { fragment: { start: p.uniprotStart, end: p.uniprotEnd } }
+            : {}),
+          tool: p.toolUsed,
+        },
+        'AlphaFold',
+        p.entryId,
+        meta,
+      ),
+    );
+  }
+  return { ok: true, value: out };
+}
+
+/** Picks the first AlphaFold model for an accession (fragment 1). Returns null when none matches. */
 export function parseAlphaFold(
   raw: unknown,
   accession: UniProtAccession,
   meta: FetchMeta,
 ): IpcResult<StructureRecord | null> {
-  const v = validate(AlphaFoldListSchema, raw, 'AlphaFold');
-  if (!v.ok) return v;
-  const p = v.value.find((x) => x.uniprotAccession === accession) ?? null;
-  if (!p) return { ok: true, value: null };
-  const acc = parseUniProtAccession(p.uniprotAccession);
-  if (!acc) return bad('AlphaFold returned an accession in an unknown format.');
-  return {
-    ok: true,
-    value: sourced(
-      {
-        entryId: p.entryId,
-        uniprotAccession: acc,
-        modelVersion: p.latestVersion,
-        createdDate: p.modelCreatedDate,
-        meanPlddt: p.globalMetricValue,
-        fractions: {
-          veryLow: p.fractionPlddtVeryLow,
-          low: p.fractionPlddtLow,
-          confident: p.fractionPlddtConfident,
-          veryHigh: p.fractionPlddtVeryHigh,
-        },
-        sequence: p.sequence,
-        pdbUrl: p.pdbUrl,
-        cifUrl: p.cifUrl,
-        ...(p.paeImageUrl ? { paeImageUrl: p.paeImageUrl } : {}),
-        tool: p.toolUsed,
-      },
-      'AlphaFold',
-      p.entryId,
-      meta,
-    ),
-  };
+  const r = parseAlphaFoldModels(raw, accession, meta);
+  return r.ok ? { ok: true, value: r.value[0] ?? null } : r;
 }
 
 // ---------------------------------------------------------------- OrthoDB
@@ -574,5 +617,78 @@ export function parseOrthoDbGroup(raw: unknown, meta: FetchMeta): IpcResult<Sour
       id,
       meta,
     ),
+  };
+}
+
+// ---------------------------------------------------------------- NCBI transcripts and sequences
+
+/** Parses the NCBI product report: transcripts with exon coordinates on the primary genomic location. */
+export function parseNcbiProducts(
+  raw: unknown,
+  geneId: NcbiGeneId,
+  meta: FetchMeta,
+): IpcResult<TranscriptSet> {
+  const v = validate(NcbiProductReportSchema, raw, 'NCBI product report');
+  if (!v.ok) return v;
+  const product = v.value.reports?.[0]?.product;
+  const transcripts: Transcript[] = [];
+  for (const t of product?.transcripts ?? []) {
+    const loc = t.genomic_locations?.[0];
+    const strand = loc?.genomic_range.orientation;
+    if (!loc || (strand !== 'plus' && strand !== 'minus')) continue;
+    const exons = (loc.exons ?? [])
+      .map((x) => ({
+        order: x.order,
+        begin: Math.min(Number(x.begin), Number(x.end)),
+        end: Math.max(Number(x.begin), Number(x.end)),
+      }))
+      .filter((x) => Number.isFinite(x.begin) && Number.isFinite(x.end))
+      .sort((a, b) => a.order - b.order);
+    const cds = t.cds?.range?.[0];
+    const cdsBegin = cds ? Number(cds.begin) : NaN;
+    const cdsEnd = cds ? Number(cds.end) : NaN;
+    transcripts.push({
+      accession: t.accession_version ?? t.protein?.accession_version ?? 'no accession',
+      name: t.name ?? t.protein?.name ?? '',
+      proteinOnly: t.accession_version === undefined,
+      ...(t.protein
+        ? {
+            protein: {
+              accession: t.protein.accession_version,
+              name: t.protein.name ?? '',
+              ...(t.protein.length !== undefined ? { length: t.protein.length } : {}),
+            },
+          }
+        : {}),
+      type: t.type ?? '',
+      ...(t.length !== undefined ? { length: t.length } : {}),
+      ...(t.select_category ? { selectCategory: t.select_category } : {}),
+      ...(Number.isFinite(cdsBegin) && Number.isFinite(cdsEnd)
+        ? { cds: { begin: cdsBegin, end: cdsEnd } }
+        : {}),
+      sequenceAccession: loc.genomic_accession_version,
+      strand,
+      exons,
+    });
+  }
+  return { ok: true, value: sourced({ geneId, transcripts }, 'NCBI', `${geneId} product report`, meta) };
+}
+
+/** Finds one sequence (chromosome, organelle, plasmid) by RefSeq accession in an NCBI sequence report. */
+export function parseNcbiSequenceReport(raw: unknown, accession: string): IpcResult<SequenceInfo | null> {
+  const v = validate(NcbiSequenceReportsSchema, raw, 'NCBI sequence report');
+  if (!v.ok) return v;
+  const r = (v.value.reports ?? []).find(
+    (x) => x.refseq_accession === accession || x.genbank_accession === accession,
+  );
+  if (!r) return { ok: true, value: null };
+  return {
+    ok: true,
+    value: {
+      accession,
+      name: r.sequence_name ?? r.chr_name ?? accession,
+      length: r.length,
+      moleculeType: r.assigned_molecule_location_type ?? 'unknown',
+    },
   };
 }

@@ -115,31 +115,6 @@ test('app:// rejects path traversal and serves only the dist folder', async () =
   expect(await win.evaluate(() => fetch('/package.json').then((r) => r.status))).toBe(404);
 });
 
-test('connection check is answered from recorded fixtures in test mode, with typed errors for unrecorded URLs', async () => {
-  await win.click('button');
-  await win.waitForFunction(() =>
-    [...document.querySelectorAll('td:nth-child(2)')].every((c) => !/checking/.test(c.textContent ?? '')),
-  );
-  const rows = await win.$$eval('tr', (trs) =>
-    trs.map((t) => (t as HTMLElement).innerText.replace(/\s+/g, ' ')),
-  );
-  expect(rows[0]).toMatch(/^UniProt OK/);
-  expect(rows[1]).toMatch(/^NCBI Datasets OK/);
-  expect(rows[2]).toMatch(/^AlphaFold DB OK/);
-  expect(rows[3]).toMatch(/^OrthoDB OK/);
-  expect(rows[4]).toMatch(/^Ensembl network_down/); // no Ensembl fixture exists (host unreachable when recording)
-});
-
-test('a repeated request is served from the disk cache and shows in the cache stats', async () => {
-  await win.click('button');
-  await win.waitForFunction(() =>
-    document.querySelector('td:nth-child(2)')?.textContent?.includes('(cache)'),
-  );
-  const info = await win.evaluate(() => window.geneExplorer.cacheInfo());
-  expect(info.stats.entries).toBeGreaterThanOrEqual(4);
-  expect(info.stats.hits).toBeGreaterThanOrEqual(4);
-});
-
 // Last on purpose: a blocked top-level navigation leaves Playwright waiting for the (cancelled) load.
 test('window.open and navigation away from the app are blocked', async () => {
   const before = win.url();

@@ -4,6 +4,8 @@ import {
   parseAlphaFold,
   parseNcbiGenes,
   parseNcbiOrthologs,
+  parseNcbiProducts,
+  parseNcbiSequenceReport,
   parseNcbiTaxon,
   parseNcbiTaxonSuggest,
   parseOrthoDbGroup,
@@ -13,7 +15,7 @@ import {
   parseUniProtSearch,
   parseUniProtTaxonomy,
 } from '../../src/api/parse';
-import { parseOrthoDbGroupId, parseUniProtAccession } from '../../src/shared/ids';
+import { parseNcbiGeneId, parseOrthoDbGroupId, parseUniProtAccession } from '../../src/shared/ids';
 import { fixtureJson, meta } from '../helpers/fixtures';
 
 /** Unwraps an ok result or fails the test with the error message. */
@@ -197,5 +199,58 @@ describe('OrthoDB', () => {
     });
     expect(g.value.ecNumbers[0]?.id).toBe('3.2.1.23');
     expect(g.value.interpro.length).toBeGreaterThan(2);
+  });
+});
+
+describe('transcripts, sequence lengths and extra gene fields', () => {
+  it('parses TP53 transcripts with the MANE Select transcript and 11 exons', () => {
+    const id = parseNcbiGeneId('7157');
+    if (!id) throw new Error('id');
+    const t = ok(parseNcbiProducts(fixtureJson('ncbi-product-tp53'), id, meta()));
+    expect(t.source).toBe('NCBI');
+    expect(t.value.transcripts.length).toBe(26);
+    const mane = t.value.transcripts.find((x) => x.selectCategory === 'MANE_SELECT');
+    expect(mane?.accession).toBe('NM_000546.6');
+    expect(mane?.exons).toHaveLength(11);
+    expect(mane?.strand).toBe('minus');
+    expect(mane?.exons[0]).toEqual({ order: 1, begin: 7687377, end: 7687490 });
+    expect(mane?.cds).toEqual({ begin: 143, end: 1324 });
+    for (const x of mane?.exons ?? []) expect(x.begin).toBeLessThanOrEqual(x.end);
+  });
+  it('finds chromosome length by RefSeq accession, or null when absent', () => {
+    expect(
+      ok(parseNcbiSequenceReport(fixtureJson('ncbi-seqreport-human-chr17'), 'NC_000017.11')),
+    ).toMatchObject({
+      length: 83257441,
+      moleculeType: 'Chromosome',
+    });
+    expect(ok(parseNcbiSequenceReport(fixtureJson('ncbi-seqreport-human-chr17'), 'NC_999999.1'))).toBeNull();
+  });
+  it('reads the cytogenetic map location and annotation release', () => {
+    const g = ok(parseNcbiGenes(fixtureJson('ncbi-gene-human-tp53'), meta())).genes[0];
+    expect(g?.value.mapLocations).toEqual([{ type: 'Cytogenetic', value: '17p13.1' }]);
+    expect(g?.value.annotationName).toContain('GCF_000001405');
+  });
+  it('reads subcellular locations from UniProt', () => {
+    const p = ok(parseUniProtEntry(fixtureJson('uniprot-tp53-entry'), meta()));
+    if (p.kind !== 'active') throw new Error('active');
+    expect(p.record.value.subcellularLocations).toContain('Nucleus');
+  });
+
+  it('parses a bacterial product report that has a protein but no transcript record', () => {
+    const id = parseNcbiGeneId('945006');
+    if (!id) throw new Error('id');
+    const t = ok(parseNcbiProducts(fixtureJson('ncbi-product-lacz'), id, meta()));
+    const one = t.value.transcripts[0];
+    expect(t.value.transcripts).toHaveLength(1);
+    expect(one).toMatchObject({ proteinOnly: true, accession: 'NP_414878.1', strand: 'minus' });
+    expect(one?.protein).toEqual({ accession: 'NP_414878.1', name: 'beta-galactosidase', length: 1024 });
+    expect(one?.exons).toEqual([{ order: 1, begin: 363231, end: 366305 }]);
+  });
+  it('finds a sequence length in a small genome without a chromosome filter', () => {
+    expect(ok(parseNcbiSequenceReport(fixtureJson('ncbi-seqreport-ecoli'), 'NC_000913.3'))).toMatchObject({
+      length: 4641652,
+      moleculeType: 'Chromosome',
+    });
   });
 });

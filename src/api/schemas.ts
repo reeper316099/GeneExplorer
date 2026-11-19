@@ -42,6 +42,9 @@ export const UniProtActiveSchema = z.looseObject({
         texts: z
           .array(z.looseObject({ value: z.string(), evidences: z.array(Evidence).optional() }))
           .optional(),
+        subcellularLocations: z
+          .array(z.looseObject({ location: z.looseObject({ value: z.string() }).optional() }))
+          .optional(),
         isoforms: z
           .array(
             z.looseObject({
@@ -92,8 +95,21 @@ export const UniProtSearchSchema = z.looseObject({
       entryType: z.string(),
       primaryAccession: z.string(),
       uniProtkbId: z.string().optional(),
-      organism: z.looseObject({ taxonId: z.number() }).optional(),
+      organism: z
+        .looseObject({
+          taxonId: z.number(),
+          scientificName: z.string().optional(),
+          commonName: z.string().optional(),
+        })
+        .optional(),
       genes: z.array(z.looseObject({ geneName: Value.optional() })).optional(),
+      proteinDescription: z
+        .looseObject({
+          recommendedName: z.looseObject({ fullName: Value }).optional(),
+          submissionNames: z.array(z.looseObject({ fullName: Value })).optional(),
+        })
+        .optional(),
+      sequence: z.looseObject({ length: z.number() }).optional(),
     }),
   ),
 });
@@ -131,6 +147,8 @@ const NcbiGene = z.looseObject({
       z.looseObject({
         assembly_accession: z.string().optional(),
         assembly_name: z.string().optional(),
+        annotation_name: z.string().optional(),
+        annotation_release_date: z.string().optional(),
         genomic_locations: z
           .array(
             z.looseObject({
@@ -148,6 +166,8 @@ const NcbiGene = z.looseObject({
     )
     .optional(),
   summary: z.array(z.looseObject({ description: z.string().optional() })).optional(),
+  map_locations: z.array(z.looseObject({ map_type: z.string(), map_value: z.string() })).optional(),
+  alternate_names: z.array(z.string()).optional(),
   gene_ontology: z
     .looseObject({
       molecular_functions: z
@@ -222,6 +242,8 @@ export const AlphaFoldListSchema = z.array(
     pdbUrl: z.string(),
     cifUrl: z.string(),
     paeImageUrl: z.string().optional(),
+    uniprotStart: z.number().optional(),
+    uniprotEnd: z.number().optional(),
     toolUsed: z.string(),
   }),
 );
@@ -280,4 +302,71 @@ export const OrthoDbGroupSchema = z.looseObject({
       })
       .optional(),
   }),
+});
+
+export const NcbiProductReportSchema = z.looseObject({
+  reports: z
+    .array(
+      z.looseObject({
+        product: z.looseObject({
+          gene_id: z.string(),
+          transcripts: z
+            .array(
+              z.looseObject({
+                // Bacterial and organelle genes have no transcript record: NCBI gives only the protein.
+                accession_version: z.string().optional(),
+                protein: z
+                  .looseObject({
+                    accession_version: z.string(),
+                    name: z.string().optional(),
+                    length: z.number().optional(),
+                  })
+                  .optional(),
+                name: z.string().optional(),
+                type: z.string().optional(),
+                length: z.number().optional(),
+                select_category: z.string().optional(),
+                cds: z
+                  .looseObject({
+                    range: z.array(z.looseObject({ begin: z.string(), end: z.string() })).optional(),
+                  })
+                  .optional(),
+                genomic_locations: z
+                  .array(
+                    z.looseObject({
+                      genomic_accession_version: z.string(),
+                      sequence_name: z.string().optional(),
+                      genomic_range: z.looseObject({
+                        begin: z.string(),
+                        end: z.string(),
+                        orientation: z.string().optional(),
+                      }),
+                      exons: z
+                        .array(z.looseObject({ begin: z.string(), end: z.string(), order: z.number() }))
+                        .optional(),
+                    }),
+                  )
+                  .optional(),
+              }),
+            )
+            .optional(),
+        }),
+      }),
+    )
+    .optional(),
+});
+
+export const NcbiSequenceReportsSchema = z.looseObject({
+  reports: z
+    .array(
+      z.looseObject({
+        refseq_accession: z.string().optional(),
+        genbank_accession: z.string().optional(),
+        chr_name: z.string().optional(),
+        sequence_name: z.string().optional(),
+        length: z.number(),
+        assigned_molecule_location_type: z.string().optional(),
+      }),
+    )
+    .optional(),
 });

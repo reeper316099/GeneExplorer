@@ -48,6 +48,13 @@ export interface GeneData {
   chromosomes: string[];
   locations: GenomicLocation[];
   synonyms: string[];
+  /** Other names NCBI lists (full-name variants). */
+  alternateNames: string[];
+  /** Cytogenetic or genetic map positions as NCBI gives them (e.g. 17p13.1); empty for many species. */
+  mapLocations: { type: string; value: string }[];
+  /** Annotation release the coordinates come from, e.g. GCF_000001405.40-RS_2025_08. */
+  annotationName?: string;
+  annotationDate?: string;
   nomenclature?: { authority: string; identifier: string };
   swissProtAccessions: UniProtAccession[];
   ensemblGeneIds: EnsemblGeneId[];
@@ -95,6 +102,7 @@ export interface ProteinData {
   entryVersion: number;
   lastAnnotationUpdate: string;
   functionText?: string;
+  subcellularLocations: string[];
   features: ProteinFeature[];
   isoforms: IsoformInfo[];
   xrefs: CrossRef[];
@@ -124,6 +132,8 @@ export interface StructureData {
   pdbUrl: string;
   cifUrl: string;
   paeImageUrl?: string;
+  /** For models of very large proteins split into fragments: the UniProt residue range this fragment covers. */
+  fragment?: { start: number; end: number };
   tool: string;
 }
 export type StructureRecord = Sourced<StructureData>;
@@ -161,4 +171,37 @@ export interface Residue {
   ca: readonly [number, number, number];
   /** B-factor column; for AlphaFold models this is pLDDT (0-100). */
   bfactor: number;
+}
+
+export interface Exon {
+  order: number;
+  /** 1-based inclusive genomic coordinates, begin <= end regardless of strand. */
+  begin: number;
+  end: number;
+}
+
+export interface Transcript {
+  accession: string;
+  name: string;
+  type: string;
+  /** Spliced length in nucleotides, as NCBI reports it. */
+  length?: number;
+  /** NCBI selection label (MANE_SELECT, MANE_PLUS_CLINICAL, REFSEQ_SELECT) when present. */
+  selectCategory?: string;
+  cds?: { begin: number; end: number };
+  sequenceAccession: string;
+  strand: 'plus' | 'minus';
+  exons: Exon[];
+  /** True when NCBI has no transcript record (bacteria, organelles): `accession` is then the protein's accession. */
+  proteinOnly: boolean;
+  protein?: { accession: string; name: string; length?: number };
+}
+export type TranscriptSet = Sourced<{ geneId: NcbiGeneId; transcripts: Transcript[] }>;
+
+export interface SequenceInfo {
+  accession: string;
+  name: string;
+  length: number;
+  /** Chromosome, Mitochondrion, Plastid, Plasmid, ... as NCBI labels it. */
+  moleculeType: string;
 }

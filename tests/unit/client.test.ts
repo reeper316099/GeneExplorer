@@ -50,7 +50,7 @@ describe('GeneApi', () => {
   });
   it('turns an unrecorded URL into a typed error instead of throwing', async () => {
     const api = new GeneApi(createFixtureTransport());
-    const r = await api.getUniProt(ids.lacz);
+    const r = await api.getUniProt(need(parseUniProtAccession('P69905'))); // never recorded
     expect(r.ok).toBe(false);
   });
   it('reports "no AlphaFold model" as ok(null) rather than an error', async () => {
@@ -137,5 +137,17 @@ describe('resolveQuery', () => {
     expect((await resolve('x'.repeat(200))).kind).toBe('unsupported');
     expect((await resolve('tumor protein p53')).kind).toBe('unsupported');
     expect((await resolve('ENSG00000141510')).kind).toBe('unsupported');
+  });
+
+  it("finds the protein of a bacterial gene through UniProt's GeneID cross-reference when NCBI lists none (lacZ)", async () => {
+    const r = await resolve('lacZ', need(parseTaxonId(511145)));
+    expect(r.kind).toBe('resolved');
+    if (r.kind !== 'resolved') return;
+    expect(r.gene?.value.symbol).toBe('lacZ');
+    expect(r.protein?.value.accession).toBe('P00722');
+    expect(r.notes.join(' ')).toContain('found through UniProt');
+    // Linked by UniProt only (NCBI lists nothing), and UniProt uses the broader strain-level taxon.
+    expect(r.identity?.status).toBe('one_way');
+    expect(r.identity?.taxon).toBe('ancestor');
   });
 });

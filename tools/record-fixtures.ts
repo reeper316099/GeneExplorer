@@ -3,6 +3,7 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { NetClient, NetError } from '../electron/net';
+import { UNIPROT_ENTRY_FIELDS } from '../src/api/endpoints';
 
 const OUT = path.resolve('tests/fixtures/api');
 const U = 'https://rest.uniprot.org';
@@ -16,9 +17,8 @@ interface Item {
   ext?: string;
 }
 
-// UniProt fields requested for a gene page (keeps the TP53 entry ~100 KB instead of ~850 KB).
-const UP_FIELDS =
-  'accession,id,gene_names,gene_primary,protein_name,organism_name,organism_id,reviewed,annotation_score,length,sequence,cc_function,ft_domain,ft_region,go,xref_geneid,xref_refseq,xref_ensembl,xref_orthodb,xref_pdb,xref_alphafolddb,cc_subcellular_location,protein_existence,cc_alternative_products,lineage,sequence_version,version,date_modified';
+// UniProt fields come from the app's own URL builder so fixtures always match what the app requests.
+const UP_FIELDS = UNIPROT_ENTRY_FIELDS;
 
 // Kept small on purpose (large responses such as TP53 orthologs are 1.3 MB); expand as phases need more.
 const ITEMS: Item[] = [
@@ -100,6 +100,13 @@ const ITEMS: Item[] = [
     note: 'AlphaFold prediction list for insulin (small)',
   },
   {
+    name: 'alphafold-tp53-model',
+    url: 'https://alphafold.ebi.ac.uk/files/AF-P04637-F1-model_v6.pdb',
+    note: 'AlphaFold PDB model for TP53 (pLDDT in B-factor)',
+    kind: 'text',
+    ext: 'pdb',
+  },
+  {
     name: 'alphafold-insulin-model',
     url: 'https://alphafold.ebi.ac.uk/files/AF-P01308-F1-model_v6.pdb',
     note: 'AlphaFold PDB model for insulin (pLDDT in B-factor)',
@@ -110,6 +117,37 @@ const ITEMS: Item[] = [
     name: 'orthodb-search-tp53',
     url: 'https://data.orthodb.org/v12/search?query=P04637&level=7742&species=9606&limit=3',
     note: 'OrthoDB search by UniProt accession',
+  },
+  { name: 'ncbi-product-tp53', url: `${N}/gene/id/7157/product_report`, note: 'TP53 transcripts and exons' },
+  {
+    name: 'ncbi-seqreport-human-chr17',
+    url: `${N}/genome/accession/GCF_000001405.40/sequence_reports?chromosomes=17`,
+    note: 'Chromosome 17 length',
+  },
+  {
+    name: 'ncbi-product-lacz',
+    url: `${N}/gene/id/945006/product_report`,
+    note: 'Bacterial gene: protein-only product report',
+  },
+  {
+    name: 'ncbi-taxon-ecoli',
+    url: `${N}/taxonomy/taxon/511145`,
+    note: 'E. coli K-12 substr. MG1655 taxonomy node',
+  },
+  {
+    name: 'ncbi-seqreport-ecoli',
+    url: `${N}/genome/accession/GCF_000005845.2/sequence_reports`,
+    note: 'E. coli K-12 sequence report (no chromosome filter)',
+  },
+  {
+    name: 'uniprot-geneid-lacz',
+    url: `${U}/uniprotkb/search?query=${encodeURIComponent('xref:geneid-945006')}&fields=accession,id,gene_primary,protein_name,organism_name,reviewed,organism_id,length&size=10`,
+    note: 'UniProt entries cross-referencing GeneID 945006 (lacZ)',
+  },
+  {
+    name: 'uniprot-entry-lacz',
+    url: `${U}/uniprotkb/P00722.json?fields=${UP_FIELDS}`,
+    note: 'E. coli lacZ UniProt entry',
   },
   {
     name: 'ncbi-gene-symbol-tp53',

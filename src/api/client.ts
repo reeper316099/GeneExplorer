@@ -4,16 +4,21 @@ import type {
   GeneRecord,
   OrthologCall,
   ProteinRecord,
+  SequenceInfo,
   StructureRecord,
   TaxonCandidate,
+  TranscriptSet,
 } from '../shared/domain';
-import type { NcbiGeneId, OrthoDbGroupId, TaxonId, UniProtAccession } from '../shared/ids';
+import type { EnsemblGeneId, NcbiGeneId, OrthoDbGroupId, TaxonId, UniProtAccession } from '../shared/ids';
 import type { FetchSpec, FetchedPayload, IpcResult, Priority, Sourced } from '../shared/types';
 import { endpoints } from './endpoints';
 import {
+  parseAlphaFoldModels,
   parseAlphaFold,
   parseNcbiGenes,
   parseNcbiOrthologs,
+  parseNcbiProducts,
+  parseNcbiSequenceReport,
   parseNcbiTaxon,
   parseNcbiTaxonSuggest,
   parseOrthoDbGroup,
@@ -91,6 +96,55 @@ export class GeneApi {
     return this.json(endpoints.uniprotEntry(acc), o, (raw, m) => parseUniProtEntry(raw, m));
   }
 
+  /** Free-text UniProt search (gene or protein name), optionally within one species. */
+  searchUniProtText(
+    text: string,
+    taxon?: TaxonId,
+    o?: CallOptions,
+  ): Promise<IpcResult<Sourced<UniProtSearchHit[]>>> {
+    return this.json(endpoints.uniprotSearchText(text, taxon), o, (raw, m) => parseUniProtSearch(raw, m));
+  }
+
+  /** Searches UniProt for an exact gene symbol in any species (reviewed entries first, one result list across species). */
+  searchUniProtSymbolAny(symbol: string, o?: CallOptions): Promise<IpcResult<Sourced<UniProtSearchHit[]>>> {
+    return this.json(endpoints.uniprotSearchSymbolAny(symbol), o, (raw, m) => parseUniProtSearch(raw, m));
+  }
+
+  /** Finds UniProt entries that cross-reference an NCBI Gene ID (reviewed entries first). */
+  searchUniProtGeneId(id: NcbiGeneId, o?: CallOptions): Promise<IpcResult<Sourced<UniProtSearchHit[]>>> {
+    return this.json(endpoints.uniprotSearchGeneId(id), o, (raw, m) => parseUniProtSearch(raw, m));
+  }
+
+  /** Finds UniProt entries that cross-reference an Ensembl gene ID. */
+  searchUniProtEnsembl(id: EnsemblGeneId, o?: CallOptions): Promise<IpcResult<Sourced<UniProtSearchHit[]>>> {
+    return this.json(endpoints.uniprotSearchEnsembl(id), o, (raw, m) => parseUniProtSearch(raw, m));
+  }
+
+  /** Transcripts and exon coordinates for a gene (NCBI product report). */
+  getTranscripts(id: NcbiGeneId, o?: CallOptions): Promise<IpcResult<TranscriptSet>> {
+    return this.json(endpoints.ncbiProductReport(id), o, (raw, m) => parseNcbiProducts(raw, id, m));
+  }
+
+  /** Length and type of one genomic sequence; resolves to ok(null) when NCBI does not list it. */
+  getSequenceInfo(
+    assembly: string,
+    chromosome: string | null,
+    accession: string,
+    o?: CallOptions,
+  ): Promise<IpcResult<SequenceInfo | null>> {
+    return this.json(endpoints.ncbiSequenceReport(assembly, chromosome), o, (raw) =>
+      parseNcbiSequenceReport(raw, accession),
+    );
+  }
+
+  /** Downloads the FASTA of one UniProt isoform (used when the user switches isoform). */
+  getIsoformFasta(isoform: string, o?: CallOptions): Promise<IpcResult<FetchedPayload<string>>> {
+    return this.transport.fetchText(this.nextId(o), {
+      url: endpoints.uniprotIsoformFasta(isoform),
+      priority: o?.priority ?? 'user',
+    });
+  }
+
   /** Searches UniProt by exact gene symbol within one taxon (reviewed entries come first). */
   searchUniProtSymbol(
     symbol: string,
@@ -159,6 +213,15 @@ export class GeneApi {
   async getAlphaFold(acc: UniProtAccession, o?: CallOptions): Promise<IpcResult<StructureRecord | null>> {
     const r = await this.json(endpoints.alphafoldPrediction(acc), o, (raw, m) => parseAlphaFold(raw, acc, m));
     if (!r.ok && r.error.kind === 'not_found') return { ok: true, value: null };
+    return r;
+  }
+
+  /** Fetches all AlphaFold models (fragments) for an accession; an empty list means AlphaFold has none. */
+  async getAlphaFoldModels(acc: UniProtAccession, o?: CallOptions): Promise<IpcResult<StructureRecord[]>> {
+    const r = await this.json(endpoints.alphafoldPrediction(acc), o, (raw, m) =>
+      parseAlphaFoldModels(raw, acc, m),
+    );
+    if (!r.ok && r.error.kind === 'not_found') return { ok: true, value: [] };
     return r;
   }
 
